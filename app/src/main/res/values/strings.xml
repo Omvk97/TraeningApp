@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">TrainingApp</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="scheduledWorkoutText">Your Scheduled Workout</string>
+    <string name="lastTrainingDone">Last training: %1$s</string>
+    <string name="trainingRoutineName">%1$s</string>
+    <string name="buttonEditText">EDIT</string>
+    <string name="startWorkoutBtn">START WORKOUT</string>
+    <string name="toolbar_workout_routines">Your Workout Routines</string>
+    <string name="toolbar_start_workout">%1$s</string>
+    <string name="content_main_workout_routines">All Workout Routines</string>
+</resources>
