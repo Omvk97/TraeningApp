@@ -17,7 +17,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".WorkoutOverviewActivity"
+        <activity
+            android:name=".startedWorkoutActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".RoutineDetailsActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>

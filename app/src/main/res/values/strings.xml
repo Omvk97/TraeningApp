@@ -14,4 +14,7 @@
     <string name="toolbar_workout_routines">Your Workout Routines</string>
     <string name="toolbar_start_workout">%1$s</string>
     <string name="content_main_workout_routines">All Workout Routines</string>
+    <string name="delete_workout">Do you really want to delete this workout?</string>
+    <string name="yes">YES</string>
+    <string name="cancel">CANCEL</string>
 </resources>

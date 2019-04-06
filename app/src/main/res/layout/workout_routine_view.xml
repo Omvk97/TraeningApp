@@ -1,30 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/routineCardView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/cardView"
-    android:layout_marginStart="8dp"
+    android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
-    android:layout_marginEnd="8dp"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/textView">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/lastTrainingDoneDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Last training: 19/03/2019" />
+
+        <TextView
+            android:id="@+id/trainingRoutineTitleTxtV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/trainingRoutineName"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="@+id/lastTrainingDoneDate"
             app:layout_constraintHorizontal_bias="0.0"
@@ -33,16 +40,15 @@
             tools:text="Upper Body Workout" />
 
         <TextView
-            android:id="@+id/lastTrainingDoneDate"
+            android:id="@+id/routineDaysTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="@string/lastTrainingDone"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Last training: 19/03/2019" />
+            app:layout_constraintEnd_toEndOf="@+id/trainingRoutineTitleTxtV"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/trainingRoutineTitleTxtV"
+            app:layout_constraintTop_toBottomOf="@+id/trainingRoutineTitleTxtV"
+            tools:text="Monday and Thursday" />
 
         <Button
             android:id="@+id/editBtnScheduled"
@@ -55,17 +61,6 @@
             app:layout_constraintBaseline_toBaselineOf="@+id/lastTrainingDoneDate"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="@+id/textView3"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/textView3"
-            app:layout_constraintTop_toBottomOf="@+id/textView3"
-            tools:text="Monday and Thursday" />
-
         <Button
             android:id="@+id/startWorkoutBtn"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
@@ -74,7 +69,8 @@
             android:onClick="startWorkoutHandler"
             android:text="@string/startWorkoutBtn"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+            app:layout_constraintTop_toBottomOf="@+id/routineDaysTxt" />
+
     </android.support.constraint.ConstraintLayout>
 
 </android.support.v7.widget.CardView>
