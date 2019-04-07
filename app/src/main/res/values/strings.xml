@@ -22,4 +22,6 @@
     <string name="textview_set_reps">REPS</string>
     <string name="button_add_set">ADD SET</string>
     <string name="tapped_exercise_key">tappedExerciseKey</string>
+    <string name="toolbar_add_exercise">Add Exercise</string>
+
 </resources>

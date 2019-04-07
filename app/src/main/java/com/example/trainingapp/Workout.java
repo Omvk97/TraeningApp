@@ -1,10 +1,12 @@
 package com.example.trainingapp;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-public class TrainingRoutine {
+public class Workout implements Serializable {
+    private static final long serialVersionUID = 5L;
 
     public enum DayOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday}
 
@@ -13,13 +15,12 @@ public class TrainingRoutine {
     private Date startDate;
     private Date schedueledEndDate;
     private Date lastTraining;
-    private String routineTitle;
+    private String routineTitle = "New Workout";
     private String description;
     private ArrayList<String> routinesNotes = new ArrayList<>();
     private ArrayList<DayOfWeek> scheduledWeekDays = new ArrayList<>();
 
-    public TrainingRoutine(String routineTitle) {
-        this.routineTitle = routineTitle;
+    public Workout() {
     }
 
     public int calculateTotalSets() {
@@ -41,6 +42,14 @@ public class TrainingRoutine {
 
     public void setExercises(ArrayList<Exercise> exercises) {
         this.exercises = exercises;
+    }
+
+    public void addExercise(Exercise exercise) {
+        exercises.add(exercise);
+    }
+
+    public void removeExercise(Exercise exercise) {
+        exercises.remove(exercise);
     }
 
     public Date getStartDate() {

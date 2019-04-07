@@ -6,48 +6,44 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
-import com.example.trainingapp.Exercise;
 import com.example.trainingapp.R;
+import com.example.trainingapp.TrainingRoutine;
 import com.example.trainingapp.adapters.ExerciseAdapter;
-
-import java.util.ArrayList;
-
-import static com.example.trainingapp.activities.MainActivity.TAPPED_ROUTINE_EXERCISE_KEY;
-import static com.example.trainingapp.activities.MainActivity.TAPPED_ROUTINE_NAME_KEY;
 
 public class RoutineDetailsActivity extends AppCompatActivity implements ExerciseAdapter.OnNoteListener {
 
-    private ArrayList<Exercise> routineExercise = null;
+    private TrainingRoutine routine = null;
+    private RecyclerView exerciseRV;
+    private Bundle extras;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_routine_details);
+        setContentView(R.layout.activity_routine_view);
 
-        RecyclerView exerciseRV = findViewById(R.id.routine_details_RV);
+        setUp();
+        ExerciseAdapter adapter = new ExerciseAdapter(routine.getExercises(), this);
+        exerciseRV.setAdapter(adapter);
+    }
+
+    private void setUp() {
+        exerciseRV = findViewById(R.id.routine_details_RV);
         exerciseRV.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         exerciseRV.setLayoutManager(linearLayoutManager);
+        extras = getIntent().getExtras();
 
-        Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            routineExercise = (ArrayList<Exercise>) extras.getSerializable(TAPPED_ROUTINE_EXERCISE_KEY);
-            Toolbar toolbar = findViewById(R.id.routineDetailsToolbar);
-            toolbar.setTitle(extras.getString(TAPPED_ROUTINE_NAME_KEY));
+            routine = (TrainingRoutine) extras.getSerializable(MainActivity.TAPPED_ROUTINE_KEY);
         }
-        if (routineExercise != null) {
-            ExerciseAdapter adapter = new ExerciseAdapter(routineExercise, this);
-            exerciseRV.setAdapter(adapter);
 
-        } else {
-            // TODO Write that a mistake happend
-        }
+        Toolbar toolbar = findViewById(R.id.routineDetailsToolbar);
+        toolbar.setTitle(routine.getRoutineTitle());
     }
 
     @Override
     public void onNoteClick(int position) {
-
     }
 
     @Override

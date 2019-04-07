@@ -18,10 +18,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.startedWorkoutActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:name=".activities.WorkoutActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
         <activity
-            android:name=".activities.RoutineDetailsActivity"
+            android:name=".activities.AddExerciseActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>

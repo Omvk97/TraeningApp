@@ -36,7 +36,7 @@
 
         <include
             android:id="@+id/scheduled_routine"
-            layout="@layout/recyclerview_workout_routine"
+            layout="@layout/workout_overview"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
