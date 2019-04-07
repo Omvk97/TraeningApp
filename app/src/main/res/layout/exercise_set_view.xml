@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/setNumberTxt"
+        android:layout_width="@dimen/set_column_width"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:freezesText="true"
+        android:isScrollContainer="false"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/setBestHistoryTxt"
+        android:layout_width="@dimen/set_overview_column_width"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/setWeightTxt"
+        android:layout_width="@dimen/set_overview_column_width"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/setRepsTxt"
+        android:layout_width="@dimen/set_overview_column_width"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:textAlignment="center" />
+</TableRow>

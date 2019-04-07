@@ -8,13 +8,18 @@
     <string name="action_settings">Settings</string>
     <string name="scheduledWorkoutText">Your Scheduled Workout</string>
     <string name="lastTrainingDone">Last training: %1$s</string>
-    <string name="trainingRoutineName">%1$s</string>
     <string name="buttonEditText">EDIT</string>
     <string name="startWorkoutBtn">START WORKOUT</string>
     <string name="toolbar_workout_routines">Your Workout Routines</string>
-    <string name="toolbar_start_workout">%1$s</string>
     <string name="content_main_workout_routines">All Workout Routines</string>
     <string name="delete_workout">Do you really want to delete this workout?</string>
     <string name="yes">YES</string>
     <string name="cancel">CANCEL</string>
+    <string name="textview_adjust_timer">adjust rest timer</string>
+    <string name="textview_set_best">BEST</string>
+    <string name="textview_set_set">SET</string>
+    <string name="textview_set_kg">KG</string>
+    <string name="textview_set_reps">REPS</string>
+    <string name="button_add_set">ADD SET</string>
+    <string name="tapped_exercise_key">tappedExerciseKey</string>
 </resources>
