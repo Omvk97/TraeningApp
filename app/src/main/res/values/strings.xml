@@ -10,18 +10,24 @@
     <string name="lastTrainingDone">Last training: %1$s</string>
     <string name="buttonEditText">EDIT</string>
     <string name="startWorkoutBtn">START WORKOUT</string>
-    <string name="toolbar_workout_routines">Your Workout Routines</string>
-    <string name="content_main_workout_routines">All Workout Routines</string>
-    <string name="delete_workout">Do you really want to delete this workout?</string>
+    <string name="toolbar_workout_routines">Your Workouts </string>
+    <string name="content_main_workout_routines">All Workouts</string>
+    <string name="deletion">Are you sure you want to delete %1$s?</string>
     <string name="yes">YES</string>
     <string name="cancel">CANCEL</string>
-    <string name="textview_adjust_timer">adjust rest timer</string>
+    <string name="textview_adjust_timer">Adjust Rest Timer</string>
     <string name="textview_set_best">BEST</string>
     <string name="textview_set_set">SET</string>
     <string name="textview_set_kg">KG</string>
     <string name="textview_set_reps">REPS</string>
     <string name="button_add_set">ADD SET</string>
-    <string name="tapped_exercise_key">tappedExerciseKey</string>
     <string name="toolbar_add_exercise">Add Exercise</string>
-
+    <string name="toolbar_edit_exercise">Edit workout</string>
+    <string name="exercise_added">%1$s has been added!</string>
+    <string name="undo_string">UNDO</string>
+    <string name="preferences_name">Workout Data</string>
+    <string name="menuitem_edit_workout">Edit Workout Properties</string>
+    <string name="workout_description_hint">Write workout description here</string>
+    <string name="rest_timer_minute_hint">min</string>
+    <string name="rest_timer_second_hint">sec</string>
 </resources>

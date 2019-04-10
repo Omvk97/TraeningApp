@@ -3,4 +3,5 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="set_column_width">30dp</dimen>
     <dimen name="set_overview_column_width">50dp</dimen>
+    <dimen name="exercise_icon">40dp</dimen>
 </resources>

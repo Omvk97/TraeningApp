@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/editExerciseToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:title="@string/toolbar_edit_exercise" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <EditText
+        android:id="@+id/workoutNameTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
+
+    <ToggleButton
+        android:id="@+id/toggleMonday"
+        style="@style/AppTheme"
+        android:layout_width="@android:dimen/app_icon_size"
+        android:layout_height="@android:dimen/app_icon_size"
+        android:layout_marginTop="8dp"
+        android:onClick="exerciseWorkoutDayHandler"
+        android:tag="monday"
+        android:text="ToggleButton"
+        android:textOff="Mo"
+        android:textOn="Mo"
+        app:layout_constraintStart_toStartOf="@+id/workoutNameTxt"
+        app:layout_constraintTop_toBottomOf="@+id/workoutNameTxt" />
+
+    <ToggleButton
+        android:id="@+id/toggleTuesday"
+        style="@style/AppTheme"
+        android:layout_width="@android:dimen/app_icon_size"
+        android:layout_height="@android:dimen/app_icon_size"
+        android:layout_marginStart="8dp"
+        android:onClick="exerciseWorkoutDayHandler"
+        android:tag="tuesday"
+        android:text="ToggleButton"
+        android:textOff="Tu"
+        android:textOn="Tu"
+        app:layout_constraintBottom_toBottomOf="@+id/toggleMonday"
+        app:layout_constraintStart_toEndOf="@+id/toggleMonday"
+        app:layout_constraintTop_toTopOf="@+id/toggleMonday" />
+
+    <ToggleButton
+        android:id="@+id/toggleWednesday"
+        style="@style/AppTheme"
+        android:layout_width="@android:dimen/app_icon_size"
+        android:layout_height="@android:dimen/app_icon_size"
+        android:layout_marginStart="8dp"
+        android:onClick="exerciseWorkoutDayHandler"
+        android:tag="wednesday"
+        android:text="ToggleButton"
+        android:textOff="We"
+        android:textOn="We"
+        app:layout_constraintBottom_toBottomOf="@+id/toggleTuesday"
+        app:layout_constraintStart_toEndOf="@+id/toggleTuesday"
+        app:layout_constraintTop_toTopOf="@+id/toggleTuesday" />
+
+    <ToggleButton
+        android:id="@+id/toggleThursday"
+        style="@style/AppTheme"
+        android:layout_width="@android:dimen/app_icon_size"
+        android:layout_height="@android:dimen/app_icon_size"
+        android:layout_marginStart="8dp"
+        android:onClick="exerciseWorkoutDayHandler"
+        android:tag="thursday"
+        android:text="ToggleButton"
+        android:textOff="Th"
+        android:textOn="Th"
+        app:layout_constraintBottom_toBottomOf="@+id/toggleWednesday"
+        app:layout_constraintStart_toEndOf="@+id/toggleWednesday"
+        app:layout_constraintTop_toTopOf="@+id/toggleWednesday" />
+
+    <ToggleButton
+        android:id="@+id/toggleFriday"
+        style="@style/AppTheme"
+        android:layout_width="@android:dimen/app_icon_size"
+        android:layout_height="@android:dimen/app_icon_size"
+        android:layout_marginStart="8dp"
+        android:onClick="exerciseWorkoutDayHandler"
+        android:tag="friday"
+        android:text="ToggleButton"
+        android:textOff="Fr"
+        android:textOn="Fr"
+        app:layout_constraintBottom_toBottomOf="@+id/toggleThursday"
+        app:layout_constraintStart_toEndOf="@+id/toggleThursday"
+        app:layout_constraintTop_toTopOf="@+id/toggleThursday" />
+
+    <ToggleButton
+        android:id="@+id/toggleSaturday"
+        style="@style/AppTheme"
+        android:layout_width="@android:dimen/app_icon_size"
+        android:layout_height="@android:dimen/app_icon_size"
+        android:layout_marginStart="8dp"
+        android:onClick="exerciseWorkoutDayHandler"
+        android:tag="saturday"
+        android:text="ToggleButton"
+        android:textOff="Sa"
+        android:textOn="Sa"
+        app:layout_constraintBottom_toBottomOf="@+id/toggleFriday"
+        app:layout_constraintStart_toEndOf="@+id/toggleFriday"
+        app:layout_constraintTop_toTopOf="@+id/toggleFriday"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ToggleButton
+        android:id="@+id/toggleSunday"
+        style="@style/AppTheme"
+        android:layout_width="@android:dimen/app_icon_size"
+        android:layout_height="@android:dimen/app_icon_size"
+        android:layout_marginStart="8dp"
+        android:onClick="exerciseWorkoutDayHandler"
+        android:tag="sunday"
+        android:text="ToggleButton"
+        android:textOff="Su"
+        android:textOn="Su"
+        app:layout_constraintBottom_toBottomOf="@+id/toggleSaturday"
+        app:layout_constraintStart_toEndOf="@+id/toggleSaturday"
+        app:layout_constraintTop_toTopOf="@+id/toggleSaturday" />
+
+    <EditText
+        android:id="@+id/workoutDescriptionTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="textMultiLine"
+        app:layout_constraintStart_toStartOf="@+id/workoutNameTxt"
+        app:layout_constraintTop_toBottomOf="@+id/toggleMonday" />
+
+</android.support.constraint.ConstraintLayout>

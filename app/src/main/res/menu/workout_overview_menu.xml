@@ -2,5 +2,10 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="Edit Workout Name" />
+    <item
+        android:id="@+id/menuItemEditWorkoutProp"
+        android:title="@string/menuitem_edit_workout" />
+    <item
+        android:id="@+id/menuItemAdjustTimer"
+        android:title="@string/textview_adjust_timer" />
 </menu>

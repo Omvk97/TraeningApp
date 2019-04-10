@@ -1,6 +1,9 @@
 package com.example.trainingapp;
 
+import android.content.Context;
+
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,19 +11,17 @@ import java.util.HashMap;
 public class Workout implements Serializable {
     private static final long serialVersionUID = 5L;
 
-    public enum DayOfWeek {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday}
+    public enum WeekDay {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday}
 
-    private HashMap<Exercise, Exercise> supersets = new HashMap<>();
+    private HashMap<Exercise, Exercise> supersets = new HashMap<>(); //TODO - Implementere at man kan sætte supersæt
     private ArrayList<Exercise> exercises = new ArrayList<>();
-    private Date startDate;
-    private Date schedueledEndDate;
     private Date lastTraining;
-    private String routineTitle = "New Workout";
-    private String description;
-    private ArrayList<String> routinesNotes = new ArrayList<>();
-    private ArrayList<DayOfWeek> scheduledWeekDays = new ArrayList<>();
+    private String workoutName = "New Workout";
+    private String description = "";
+    private ArrayList<WeekDay> scheduledWeekDays = new ArrayList<>();
 
     public Workout() {
+        lastTraining = new Date();
     }
 
     public int calculateTotalSets() {
@@ -52,36 +53,21 @@ public class Workout implements Serializable {
         exercises.remove(exercise);
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public String getLastTraining(Context applicationContext) {
+        DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(applicationContext);
+        return dateFormat.format(lastTraining);
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setLastTraining() {
+        // TODO - GET THE CURRENT TIME WHEN THIS IS CALLED AND SET IT TO LAST TRAINING
     }
 
-    public Date getSchedueledEndDate() {
-        return schedueledEndDate;
+    public String getWorkoutName() {
+        return workoutName;
     }
 
-    public void setSchedueledEndDate(Date schedueledEndDate) {
-        this.schedueledEndDate = schedueledEndDate;
-    }
-
-    public Date getLastTraining() {
-        return lastTraining;
-    }
-
-    public void setLastTraining(Date lastTraining) {
-        this.lastTraining = lastTraining;
-    }
-
-    public String getRoutineTitle() {
-        return routineTitle;
-    }
-
-    public void setRoutineTitle(String routineTitle) {
-        this.routineTitle = routineTitle;
+    public void setWorkoutName(String workoutName) {
+        this.workoutName = workoutName;
     }
 
     public String getDescription() {
@@ -92,23 +78,39 @@ public class Workout implements Serializable {
         this.description = description;
     }
 
-    public ArrayList<String> getRoutinesNotes() {
-        return routinesNotes;
+    public ArrayList<WeekDay> getScheduledWeekDays() {
+        return scheduledWeekDays;
     }
 
-    public void setRoutinesNotes(ArrayList<String> routinesNotes) {
-        this.routinesNotes = routinesNotes;
-    }
-
-    public String getScheduledWeekDays() {
-        String weekdaysString = "";
-        for (DayOfWeek trainingDay : scheduledWeekDays) {
-            weekdaysString += trainingDay + ", ";
+    public String getScheduledWeekDaysString() {
+        String weekdays = "";
+        for (WeekDay day : scheduledWeekDays) {
+            if (scheduledWeekDays.indexOf(day) == scheduledWeekDays.size() - 1) {
+                weekdays += day;
+            } else {
+                weekdays += day + ", ";
+            }
         }
-        return weekdaysString;
+        return weekdays;
     }
 
-    public void setScheduledWeekDays(ArrayList<DayOfWeek> scheduledWeekDays) {
-        this.scheduledWeekDays = scheduledWeekDays;
+    public void addWeekDay(Workout.WeekDay day) {
+        scheduledWeekDays.add(day);
+    }
+
+    public void removeWeekDay(WeekDay day) {
+        scheduledWeekDays.remove(day);
+    }
+
+    @Override
+    public String toString() {
+        return "Workout{" +
+                "supersets=" + supersets +
+                ", exercises=" + exercises +
+                ", lastTraining=" + lastTraining +
+                ", workoutName='" + workoutName + '\'' +
+                ", description='" + description + '\'' +
+                ", scheduledWeekDays=" + scheduledWeekDays +
+                '}';
     }
 }

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/exerciseName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/exerciseImage"
+        app:layout_constraintEnd_toStartOf="@+id/editImageButton"
+        app:layout_constraintStart_toEndOf="@+id/exerciseImage"
+        app:layout_constraintTop_toTopOf="@+id/exerciseImage"
+        tools:text="Barbell Deadlift" />
+
+    <ImageView
+        android:id="@+id/exerciseImage"
+        android:layout_width="@dimen/exercise_icon"
+        android:layout_height="@dimen/exercise_icon"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/editImageButton"
+        style="@style/Widget.AppCompat.ImageButton"
+        android:layout_width="@dimen/exercise_icon"
+        android:layout_height="@dimen/exercise_icon"
+        android:layout_marginEnd="8dp"
+        android:background="@color/colorBackground"
+        android:onClick="editExercise"
+        app:layout_constraintBottom_toBottomOf="@+id/exerciseName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/exerciseName"
+        app:srcCompat="@drawable/edit_exercise_image" />
+</android.support.constraint.ConstraintLayout>

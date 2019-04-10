@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/restTimerSecTxt"
+        android:layout_width="@dimen/set_overview_column_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="96dp"
+        android:layout_weight="1"
+        android:background="@null"
+        android:ems="10"
+        android:hint="@string/rest_timer_second_hint"
+        android:inputType="number"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/secPlusBtn" />
+
+    <EditText
+        android:id="@+id/restTimerMinTxt"
+        android:layout_width="@dimen/set_overview_column_width"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:background="@null"
+        android:ems="10"
+        android:hint="@string/rest_timer_minute_hint"
+        android:inputType="number"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/minPlusBtn" />
+
+    <ImageButton
+        android:id="@+id/secPlusBtn"
+        android:layout_width="0dp"
+        android:layout_height="@android:dimen/app_icon_size"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:background="?android:selectableItemBackground"
+        android:onClick="restTimerPlusClick"
+        app:layout_constraintEnd_toEndOf="@+id/restTimerSecTxt"
+        app:layout_constraintStart_toStartOf="@+id/restTimerSecTxt"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/addcircle" />
+
+    <ImageButton
+        android:id="@+id/minPlusBtn"
+        android:layout_width="0dp"
+        android:layout_height="@android:dimen/app_icon_size"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:background="?android:selectableItemBackground"
+        android:onClick="restTimerPlusClick"
+        app:layout_constraintEnd_toEndOf="@+id/restTimerMinTxt"
+        app:layout_constraintStart_toStartOf="@+id/restTimerMinTxt"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/addcircle" />
+
+    <ImageButton
+        android:id="@+id/minMinusBtn"
+        android:layout_width="0dp"
+        android:layout_height="@android:dimen/app_icon_size"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:background="?android:selectableItemBackground"
+        android:onClick="restTimerMinusClick"
+        app:layout_constraintEnd_toEndOf="@+id/restTimerMinTxt"
+        app:layout_constraintStart_toStartOf="@+id/restTimerMinTxt"
+        app:layout_constraintTop_toBottomOf="@+id/restTimerMinTxt"
+        app:srcCompat="@drawable/removecircle" />
+
+    <ImageButton
+        android:id="@+id/secMinusBtn"
+        android:layout_width="0dp"
+        android:layout_height="@android:dimen/app_icon_size"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:background="?android:selectableItemBackground"
+        android:onClick="restTimerMinusClick"
+        app:layout_constraintEnd_toEndOf="@+id/restTimerSecTxt"
+        app:layout_constraintStart_toStartOf="@+id/restTimerSecTxt"
+        app:layout_constraintTop_toBottomOf="@+id/restTimerSecTxt"
+        app:srcCompat="@drawable/removecircle" />
+
+    <Button
+        android:id="@+id/cancelRestBtn"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:onClick="restTimerCancelBtn"
+        android:text="@string/cancel"
+        app:layout_constraintEnd_toStartOf="@+id/okRestBtn"
+        app:layout_constraintTop_toTopOf="@+id/okRestBtn" />
+
+    <Button
+        android:id="@+id/okRestBtn"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="restTimerOkBtn"
+        android:text="OK"
+        app:layout_constraintStart_toEndOf="@+id/secMinusBtn"
+        app:layout_constraintTop_toBottomOf="@+id/secMinusBtn" />
+
+</android.support.constraint.ConstraintLayout>

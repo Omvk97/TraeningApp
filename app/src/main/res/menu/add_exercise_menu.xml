@@ -8,4 +8,9 @@
         android:title="Search"
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/filterExercises"
+        android:icon="@drawable/filter"
+        android:title="Filter"
+        app:showAsAction="ifRoom" />
 </menu>

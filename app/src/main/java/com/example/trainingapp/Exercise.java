@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Exercise implements Serializable {
     private static final long serialVersionUID = 1L;
-    private final int START_NUM_OF_SETS = 3;
+    private final int INITIAL_NUM_OF_SETS = 3;
     private MuscleCategory exerciseMuscleCategory;
     private Category category;
     private ImageView picture;
@@ -17,6 +17,7 @@ public class Exercise implements Serializable {
     private List<ExerciseSet> sets;
     private ExerciseHistory exerciseHistory;
     private Timer restTimer;
+    private List<String> exerciseNotes = new ArrayList<>(); // TODO - Gør så man kan skrive noter til ens workout
 
     public Exercise(String exerciseName, Category category) {
         this.picture = picture;
@@ -24,7 +25,7 @@ public class Exercise implements Serializable {
         this.category = category;
         this.notes = new ArrayList<>();
         this.sets = new ArrayList<>();
-        for (int i = 0; i < START_NUM_OF_SETS; i++) {
+        for (int i = 0; i < INITIAL_NUM_OF_SETS; i++) {
             sets.add(new ExerciseSet());
         }
         restTimer = new Timer(90000);
@@ -39,7 +40,12 @@ public class Exercise implements Serializable {
     }
 
     public String getExerciseName() {
-        return exerciseName + " " + category.toString();
+        if (!category.toString().equalsIgnoreCase("other")) {
+            return category.toString().substring(0, 1).toUpperCase() + category.toString().substring(1).toLowerCase() + " " + exerciseName;
+        } else {
+            return exerciseName;
+        }
+
     }
 
     public List<ExerciseSet> getSets() {
