@@ -9,17 +9,17 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.trainingapp.Exercise;
+import com.example.trainingapp.WorkoutExercise;
 import com.example.trainingapp.R;
 
 import java.util.List;
 
 public class AddExerciseAdapter extends RecyclerView.Adapter<AddExerciseAdapter.ExerciseViewHolder> {
-    private List<Exercise> exercises;
+    private List<WorkoutExercise> mWorkoutExercises;
     private OnNoteListener onNoteListener;
 
-    public AddExerciseAdapter(List<Exercise> exercises, OnNoteListener onNoteListener) {
-        this.exercises = exercises;
+    public AddExerciseAdapter(List<WorkoutExercise> workoutExercises, OnNoteListener onNoteListener) {
+        this.mWorkoutExercises = workoutExercises;
         this.onNoteListener = onNoteListener;
     }
 
@@ -31,14 +31,14 @@ public class AddExerciseAdapter extends RecyclerView.Adapter<AddExerciseAdapter.
 
     @Override
     public void onBindViewHolder(ExerciseViewHolder exerciseViewHolder, int i) {
-        exerciseViewHolder.exerciseName.setText(exercises.get(i).getExerciseName());
+        exerciseViewHolder.exerciseName.setText(mWorkoutExercises.get(i).getExerciseName());
         exerciseViewHolder.exerciseImage.setBackgroundResource(R.drawable.image_timer);
         exerciseViewHolder.editImageButton.setTag(i); // Tag to get position in array
     }
 
     @Override
     public int getItemCount() {
-        return exercises.size();
+        return mWorkoutExercises.size();
     }
 
     @Override

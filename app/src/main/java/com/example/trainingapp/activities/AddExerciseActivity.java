@@ -10,12 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.example.trainingapp.Exercise;
+import com.example.trainingapp.WorkoutExercise;
 import com.example.trainingapp.R;
 import com.example.trainingapp.Workout;
 import com.example.trainingapp.adapters.AddExerciseAdapter;
@@ -23,15 +22,15 @@ import com.example.trainingapp.adapters.OnNoteListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class AddExerciseActivity extends AppCompatActivity implements OnNoteListener {
     private static final String TAG = "AddExerciseActivity";
-    public static final String EXERCISE_TO_BE_EDITED = "exercise to be eidted";
-    private List<Exercise> exercises = new ArrayList<>();
+    public static final String EXERCISE_TO_PASSALONG = "exercise to be edited";
+    private List<WorkoutExercise> mWorkoutExercises = new ArrayList<>();
     private RecyclerView exerciseRV;
     private AddExerciseAdapter adapter;
     private Workout selectedWorkout;
+    private Bundle extras;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -43,10 +42,6 @@ public class AddExerciseActivity extends AppCompatActivity implements OnNoteList
     public boolean onOptionsItemSelected(MenuItem item) {
         // TODO - Search after specific exercise
         //TODO - Filter popup with exercise muscle category + exercise Equipment
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                Log.d(TAG, "onOptionsItemSelected: Home pressed");
-        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -55,16 +50,15 @@ public class AddExerciseActivity extends AppCompatActivity implements OnNoteList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_exercise);
 
-        Bundle extras = getIntent().getExtras();
+        extras = getIntent().getExtras();
         if (extras != null) {
             selectedWorkout = (Workout) extras.getSerializable(WorkoutActivity.SELECTED_WORKOUT_KEY);
         }
 
         // Change toolbar title to the selected exercise
         setupToolbar();
+        // set up test mWorkoutExercises, shall be replaced with setting up default mWorkoutExercises
         setUpTestExercises();
-
-        // Get selected workout that the user wants to add exercises to
 
         exerciseRV = findViewById(R.id.allExercisesRV);
         exerciseRV.setHasFixedSize(true);
@@ -72,68 +66,67 @@ public class AddExerciseActivity extends AppCompatActivity implements OnNoteList
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         exerciseRV.setLayoutManager(linearLayoutManager);
 
-        adapter = new AddExerciseAdapter(exercises, this);
+        adapter = new AddExerciseAdapter(mWorkoutExercises, this);
         exerciseRV.setAdapter(adapter);
 
     }
 
-    public void createCustomExercise(View v) {
-        // TODO Exercise edit
-
-        /*
-        Just testing
-         */
-        Random random = new Random();
-        int randomNumber = random.nextInt(3) + 1;
-        switch (randomNumber) {
-            case 1:
-                exercises.add(new Exercise("Pull Ups", Exercise.Category.BODYWEIGHT));
-                break;
-            case 2:
-                exercises.add(new Exercise("Bent Over Rows", Exercise.Category.DUMBBELL));
-                break;
-            case 3:
-                exercises.add(new Exercise("Push Ups", Exercise.Category.BODYWEIGHT));
-                break;
-        }
-        adapter.notifyDataSetChanged();
-    }
-
     public void setUpTestExercises() {
-        exercises.add(new Exercise("Back Extenseion", Exercise.Category.OTHER));
-        exercises.add(new Exercise("Seated Shoulder Press", Exercise.Category.DUMBBELL));
-        exercises.add(new Exercise("Deadlift", Exercise.Category.BARBELL));
-        exercises.add(new Exercise("Curl", Exercise.Category.EZBAR));
-        exercises.add(new Exercise("Bench Press", Exercise.Category.DUMBBELL));
-        exercises.add(new Exercise("Lunge", Exercise.Category.DUMBBELL));
+        // TODO - GET THE EXERCISES FROM A DATABASE
+        mWorkoutExercises.add(new WorkoutExercise("Back Extension"));
+        mWorkoutExercises.add(new WorkoutExercise("Seated Shoulder Press"));
+        mWorkoutExercises.add(new WorkoutExercise("Deadlift"));
+        mWorkoutExercises.add(new WorkoutExercise("Curl"));
+        mWorkoutExercises.add(new WorkoutExercise("Bench Press"));
+        mWorkoutExercises.add(new WorkoutExercise("Lunge"));
+
+        WorkoutExercise editedWorkoutExercise = ((WorkoutExercise) extras.getSerializable(EXERCISE_TO_PASSALONG));
+        if (editedWorkoutExercise != null) {
+            mWorkoutExercises.add(editedWorkoutExercise);
+        }
     }
 
     private void setupToolbar() {
         Toolbar toolbar = findViewById(R.id.addExerciseToolbar);
         setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         toolbar.setTitle(getString(R.string.toolbar_add_exercise));
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
-    public void editExercise(View v) {
-        // TODO Exercise edit and fix null point exception
+    public void createCustomExercise(View v) {
         Intent editExercise = new Intent(this, EditExerciseActivity.class);
-        editExercise.putExtra(EXERCISE_TO_BE_EDITED, exercises.get((Integer) v.getTag()));
+        editExercise.putExtra(WorkoutActivity.SELECTED_WORKOUT_KEY, selectedWorkout);
         startActivity(editExercise);
     }
+
+    public void editExercise(View v) {
+        // TODO WorkoutExercise edit AND VISUAL REPRESENTATION THAT YOU HAVE CLICKED
+        Intent editExercise = new Intent(this, EditExerciseActivity.class);
+        editExercise.putExtra(WorkoutActivity.SELECTED_WORKOUT_KEY, selectedWorkout);
+        editExercise.putExtra(EXERCISE_TO_PASSALONG, mWorkoutExercises.get((Integer) v.getTag()));
+        startActivity(editExercise);
+    }
+
 
     @Override
     public void onNoteClick(final int position) {
         View contextView = findViewById(R.id.allExercisesRV);
-        selectedWorkout.addExercise(exercises.get(position));
-        String snackbarMessage = getString(R.string.exercise_added, exercises.get(position).getExerciseName());
+        mWorkoutExercises.get(position).setGeneralRestTimer(selectedWorkout.getGeneralRestTimer());
+        selectedWorkout.addExercise(mWorkoutExercises.get(position));
+        String snackbarMessage = getString(R.string.exercise_added, mWorkoutExercises.get(position).getExerciseName());
         Snackbar addedExerciseSnack = Snackbar.make(contextView, snackbarMessage, Snackbar.LENGTH_LONG);
         addedExerciseSnack.setAction(R.string.undo_string, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (selectedWorkout.getExercises().contains(exercises.get(position))) {
-                    selectedWorkout.removeExercise(exercises.get(position));
+                if (selectedWorkout.getWorkoutExercises().contains(mWorkoutExercises.get(position))) {
+                    selectedWorkout.removeExercise(mWorkoutExercises.get(position));
                 }
             }
         });
@@ -143,10 +136,10 @@ public class AddExerciseActivity extends AppCompatActivity implements OnNoteList
     @Override
     public void onLongNoteClick(final int position) {
         new AlertDialog.Builder(this)
-                .setMessage(getString(R.string.deletion, exercises.get(position).getExerciseName()))
+                .setMessage(getString(R.string.deletion, mWorkoutExercises.get(position).getExerciseName()))
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        exercises.remove(exercises.get(position));
+                        mWorkoutExercises.remove(mWorkoutExercises.get(position));
                         adapter.notifyDataSetChanged();
                     }
                 })

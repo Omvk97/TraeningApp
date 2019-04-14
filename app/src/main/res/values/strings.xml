@@ -15,6 +15,7 @@
     <string name="deletion">Are you sure you want to delete %1$s?</string>
     <string name="yes">YES</string>
     <string name="cancel">CANCEL</string>
+    <string name="close">CLOSE</string>
     <string name="textview_adjust_timer">Adjust Rest Timer</string>
     <string name="textview_set_best">BEST</string>
     <string name="textview_set_set">SET</string>
@@ -30,4 +31,10 @@
     <string name="workout_description_hint">Write workout description here</string>
     <string name="rest_timer_minute_hint">min</string>
     <string name="rest_timer_second_hint">sec</string>
+    <string name="no_scheduled_workout">No scheduled workout today!</string>
+    <string name="choose_muscles">Muscle Group</string>
+    <string name="choose_exercise_support">Category</string>
+    <string name="exercise_name_hint">Exercise Name:</string>
+    <string name="upload_image">Upload Image</string>
+    <string name="add_note">Add Note</string>
 </resources>

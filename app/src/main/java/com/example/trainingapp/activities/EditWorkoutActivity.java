@@ -35,6 +35,7 @@ public class EditWorkoutActivity extends AppCompatActivity {
             selectedWorkout = (Workout) extras.getSerializable(WorkoutActivity.SELECTED_WORKOUT_KEY);
         }
         initialiseFields();
+        setUpToolbar();
     }
 
     private void initialiseFields() {
@@ -48,7 +49,7 @@ public class EditWorkoutActivity extends AppCompatActivity {
         sunday = findViewById(R.id.toggleSunday);
         description = findViewById(R.id.workoutDescriptionTxt);
 
-        workoutName.setText(selectedWorkout.getWorkoutName());
+        workoutName.setText(selectedWorkout.getTitle());
         if (selectedWorkout.getScheduledWeekDays().size() != 0) {
             for (Workout.WeekDay weekday : selectedWorkout.getScheduledWeekDays()) {
                 switch (weekday.toString().toLowerCase().trim()) {
@@ -101,7 +102,8 @@ public class EditWorkoutActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        selectedWorkout.setWorkoutName(workoutName.getText().toString());
+        // TODO - ADD THIS TO HOME BUTTON IN TOOLBAR
+        selectedWorkout.setTitle(workoutName.getText().toString());
         selectedWorkout.setDescription(description.getText().toString());
         Intent goBackToWorkoutView = new Intent(this, WorkoutActivity.class);
         goBackToWorkoutView.putExtra(WorkoutActivity.SELECTED_WORKOUT_KEY, selectedWorkout);

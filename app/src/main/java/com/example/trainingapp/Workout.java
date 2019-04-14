@@ -6,51 +6,77 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "workout")
 public class Workout implements Serializable {
-    private static final long serialVersionUID = 5L;
-
-    public enum WeekDay {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday}
-
-    private HashMap<Exercise, Exercise> supersets = new HashMap<>(); //TODO - Implementere at man kan sætte supersæt
-    private ArrayList<Exercise> exercises = new ArrayList<>();
-    private Date lastTraining;
-    private String workoutName = "New Workout";
+    @PrimaryKey(autoGenerate = true)
+    private long id;
+    @ColumnInfo(name = "title")
+    private String title = "New Workout";
+    @ColumnInfo(name = "description")
     private String description = "";
+    private ArrayList<WorkoutExercise> mWorkoutExercises = new ArrayList<>();
+    @ColumnInfo(name = "last_training_date")
+    private Date lastTraining;
     private ArrayList<WeekDay> scheduledWeekDays = new ArrayList<>();
+    private RestTimer generalRestTimer;
 
     public Workout() {
-        lastTraining = new Date();
+        lastTraining = new Date(); // TODO - Fix so when a new workout is created the last training is not today
+        generalRestTimer = new RestTimer(1, 30);
     }
 
-    public int calculateTotalSets() {
-        //TODO for every exercise get total sets and add it to a totalsets counter and return it
-        return 0;
+    public Workout(int id, String title, String description, long dateMiliSeconds) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.lastTraining = new Date(dateMiliSeconds);
+        generalRestTimer = new RestTimer(1, 30);
+
     }
 
-    public HashMap<Exercise, Exercise> getSupersets() {
-        return supersets;
+    public long getId() {
+        return id;
     }
 
-    public void setSupersets(HashMap<Exercise, Exercise> supersets) {
-        this.supersets = supersets;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public ArrayList<Exercise> getExercises() {
-        return exercises;
+    public Date getLastTraining() {
+        return lastTraining;
     }
 
-    public void setExercises(ArrayList<Exercise> exercises) {
-        this.exercises = exercises;
+    public void setLastTraining(Date lastTraining) {
+        this.lastTraining = lastTraining;
     }
 
-    public void addExercise(Exercise exercise) {
-        exercises.add(exercise);
+    public void setScheduledWeekDays(ArrayList<WeekDay> scheduledWeekDays) {
+        this.scheduledWeekDays = scheduledWeekDays;
     }
 
-    public void removeExercise(Exercise exercise) {
-        exercises.remove(exercise);
+    public void setGeneralRestTimer(RestTimer generalRestTimer) {
+        this.generalRestTimer = generalRestTimer;
+    }
+
+    public ArrayList<WorkoutExercise> getWorkoutExercises() {
+        return mWorkoutExercises;
+    }
+
+    public void setWorkoutExercises(ArrayList<WorkoutExercise> workoutExercises) {
+        this.mWorkoutExercises = workoutExercises;
+    }
+
+    public void addExercise(WorkoutExercise workoutExercise) {
+        mWorkoutExercises.add(workoutExercise);
+    }
+
+    public void removeExercise(WorkoutExercise workoutExercise) {
+        mWorkoutExercises.remove(workoutExercise);
     }
 
     public String getLastTraining(Context applicationContext) {
@@ -62,12 +88,12 @@ public class Workout implements Serializable {
         // TODO - GET THE CURRENT TIME WHEN THIS IS CALLED AND SET IT TO LAST TRAINING
     }
 
-    public String getWorkoutName() {
-        return workoutName;
+    public String getTitle() {
+        return title;
     }
 
-    public void setWorkoutName(String workoutName) {
-        this.workoutName = workoutName;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDescription() {
@@ -102,13 +128,43 @@ public class Workout implements Serializable {
         scheduledWeekDays.remove(day);
     }
 
+    public int getRestTimerMinutes() {
+        return generalRestTimer.getMinutes();
+    }
+
+    public int getRestTimerSeconds() {
+        return generalRestTimer.getSeconds();
+    }
+
+    public RestTimer getGeneralRestTimer() {
+        return generalRestTimer;
+    }
+
+    public void setGeneralRestTimer(int minutes, int seconds) {
+        generalRestTimer.setMinutes(minutes);
+        generalRestTimer.setSeconds(seconds);
+    }
+
+    public enum WeekDay {
+        SUNDAY(1), MONDAY(2), TUESDAY(3), WEDNESDAY(4), THURSDAY(5), FRIDAY(6), SATURDAY(7); // Corresponds to Java.util.Calendars weekdays
+
+        private int weekdayValue;
+
+        WeekDay(int i) {
+            this.weekdayValue = i;
+        }
+
+        public int getWeekdayValue() {
+            return weekdayValue;
+        }
+    }
+
     @Override
     public String toString() {
         return "Workout{" +
-                "supersets=" + supersets +
-                ", exercises=" + exercises +
+                ", mWorkoutExercises=" + mWorkoutExercises +
                 ", lastTraining=" + lastTraining +
-                ", workoutName='" + workoutName + '\'' +
+                ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", scheduledWeekDays=" + scheduledWeekDays +
                 '}';

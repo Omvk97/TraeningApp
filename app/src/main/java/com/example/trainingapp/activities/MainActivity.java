@@ -1,45 +1,63 @@
 package com.example.trainingapp.activities;
 
+
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Space;
 import android.widget.TextView;
 
+import com.example.trainingapp.AppDatabase;
 import com.example.trainingapp.R;
 import com.example.trainingapp.Workout;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    public static final String ADDED_WORKOUT = "Added workout";
+    public static final String STARTED_WORKOUT_KEY = "started workout";
     private List<Workout> workouts = new ArrayList<>();
+    private Context context;
+    private Calendar currentDate = Calendar.getInstance();
+    private LinearLayout linearLayout;
+    private boolean noScheduledWorkoutTextAdded = false;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            workouts.add((Workout) extras.getSerializable(WorkoutActivity.SELECTED_WORKOUT_KEY));
-        }
+        linearLayout = findViewById(R.id.allWorkoutsLinLay);
+        currentDate.setTimeZone(TimeZone.getDefault());
+        context = this;
+        db = AppDatabase.getAppDatabase(this);
+        workouts.addAll(db.workoutDao().getAllWorkouts());
         setAllRoutinesInLinearLayout();
         setScheduledWorkoutCard();
+
+    }
+
+    public void startWorkout(View view) {
+        Intent startWorkoutIntent = new Intent(this, StartWorkoutActivity.class);
+        startWorkoutIntent.putExtra(STARTED_WORKOUT_KEY, workouts.get((Integer) view.getTag()));
+        startActivity(startWorkoutIntent);
     }
 
     public void addTrainingRoutine(View v) {
         Workout newWorkout = new Workout();
-        Intent intent = new Intent(getApplicationContext(), WorkoutActivity.class);
-        intent.putExtra(WorkoutActivity.SELECTED_WORKOUT_KEY, newWorkout);
+        long idOfInsertedWorkout = db.workoutDao().insertWorkout(newWorkout);
+        Intent intent = new Intent(this, WorkoutActivity.class);
+        intent.putExtra(WorkoutActivity.SELECTED_WORKOUT_KEY, db.workoutDao().getWorkoutByID(idOfInsertedWorkout));
         startActivity(intent);
     }
 
@@ -48,69 +66,87 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setScheduledWorkoutCard() {
-        //TODO - Get the current time of the android device and check all the dates from workouts arraylist and if one of the workouts scheduled workouts matches todays date set it here
-        CardView scheduledRoutineCard = findViewById(R.id.scheduled_routine);
-        if (workouts.size() != 0) {
-            Log.d(TAG, "setScheduledWorkoutCard: Insertion");
-            Workout scheduledWorkout = workouts.get(workouts.size() - 1);
-            TextView lastTrainingDoneTest = scheduledRoutineCard.findViewById(R.id.lastTrainingDoneDateTxt);
-            TextView titleTest = scheduledRoutineCard.findViewById(R.id.routineTitleTxt);
-            TextView routineWeekDays = scheduledRoutineCard.findViewById(R.id.routineDaysTxt);
-            lastTrainingDoneTest.setText(getString(R.string.lastTrainingDone, scheduledWorkout.getLastTraining(this)));
-            titleTest.setText(scheduledWorkout.getWorkoutName());
-            routineWeekDays.setText(scheduledWorkout.getScheduledWeekDaysString());
-        } else {
-            Log.d(TAG, "setScheduledWorkoutCard: DELETION");
-            ((ViewGroup)scheduledRoutineCard.getParent()).removeView(scheduledRoutineCard);
-            TextView yourScheduledWorkout = findViewById(R.id.scheduledWorkoutTxt);
-            ((ViewGroup)yourScheduledWorkout.getParent()).removeView(yourScheduledWorkout);
+        boolean scheduledWorkoutToday = false;
+        // The scheduled workout should be added at the index where allWorkouts textview is and thereby moving allworkouts textview one down
+        int allWorkoutsTextIndex = linearLayout.indexOfChild(findViewById(R.id.allWorkoutsTxt));
+        for (Workout workout : workouts) {
+            for (Workout.WeekDay scheduledDay : workout.getScheduledWeekDays()) {
+                if (currentDate.get(Calendar.DAY_OF_WEEK) == scheduledDay.getWeekdayValue()) {
+                    View scheduledWorkout = inflateWorkoutView(workout);
+                    linearLayout.addView(scheduledWorkout, allWorkoutsTextIndex++);
+                    addSpaceInLinearLayout(allWorkoutsTextIndex++);
+                    scheduledWorkoutToday = true;
+                }
+            }
+        }
+        if (!scheduledWorkoutToday && !noScheduledWorkoutTextAdded) {
+            TextView noScheduledWorkout = new TextView(context);
+            noScheduledWorkout.setText(R.string.no_scheduled_workout);
+            linearLayout.addView(noScheduledWorkout, allWorkoutsTextIndex++);
+            noScheduledWorkoutTextAdded = true;
         }
     }
 
     private void setAllRoutinesInLinearLayout() {
-        for (Workout workout : workouts) { // TODO - MAKE THIS WITH A VIEWHOLDER PATTERN TO INCREASE PERFORMANCE MAYBE YOUR OWN "ADAPTER" ATLEAST MOVE IT TO ANOTHER CLASS
-            LinearLayout linearLayout = findViewById(R.id.allWorkoutsLinLay);
-            View tester = getLayoutInflater().inflate(R.layout.workout_overview, null, false);
-            TextView lastTrainingDone = tester.findViewById(R.id.lastTrainingDoneDateTxt);
-            TextView routineTitle = tester.findViewById(R.id.routineTitleTxt);
-            TextView routineDays = tester.findViewById(R.id.routineDaysTxt);
-            lastTrainingDone.setText(getString(R.string.lastTrainingDone, workout.getLastTraining(this)));
-            routineTitle.setText(workout.getWorkoutName());
-            routineDays.setText(workout.getScheduledWeekDaysString());
-            tester.setTag(workouts.indexOf(workout)); // Setting the tag to the positon in the arraylist for later reference
-
-            tester.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(getApplicationContext(), WorkoutActivity.class);
-                    intent.putExtra(WorkoutActivity.SELECTED_WORKOUT_KEY, workouts.get((Integer) v.getTag()));
-                    startActivity(intent);
-                }
-            });
-            tester.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    Log.d(TAG, "onLongNoteClick: called");
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
-                    builder.setMessage(getString(R.string.deletion, workouts.get((Integer) v.getTag()).getWorkoutName()))
-                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    Log.d(TAG, "onClick: User pressed yes");
-                                    // TODO - Delete the workout from the arraylist and the view
-                                }
-                            })
-                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    // Do nothing
-                                }
-                            }).create().show();
-                    return true;
-                }
-            });
-            linearLayout.addView(tester);
-            Space space = new Space(this);
-            space.setMinimumHeight(16);
-            linearLayout.addView(space);
+        for (Workout workout : workouts) {
+            View workoutView = inflateWorkoutView(workout);
+            linearLayout.addView(workoutView);
+            addSpaceInLinearLayout(linearLayout.getChildCount());
         }
+    }
+
+    private View inflateWorkoutView(Workout workout) {
+        // TODO - MAKE THIS WITH A VIEWHOLDER PATTERN TO INCREASE PERFORMANCE MAYBE YOUR OWN "ADAPTER" ATLEAST MOVE IT TO ANOTHER CLASS
+        View workoutView = getLayoutInflater().inflate(R.layout.workout_overview, null, false);
+        TextView lastTrainingDone = workoutView.findViewById(R.id.lastTrainingDoneDateTxt);
+        TextView routineTitle = workoutView.findViewById(R.id.routineTitleTxt);
+        TextView routineDays = workoutView.findViewById(R.id.routineDaysTxt);
+        Button startWorkoutBtn = workoutView.findViewById(R.id.startWorkoutBtn);
+        lastTrainingDone.setText(getString(R.string.lastTrainingDone, workout.getLastTraining(context)));
+        routineTitle.setText(workout.getTitle());
+        routineDays.setText(workout.getScheduledWeekDaysString());
+        workoutView.setTag(workouts.indexOf(workout)); // Setting the tag to the positon in the arraylist for later reference
+        startWorkoutBtn.setTag(workouts.indexOf(workout));
+
+        workoutView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View selectedView) {
+                Intent intent = new Intent(getApplicationContext(), WorkoutActivity.class);
+                intent.putExtra(WorkoutActivity.SELECTED_WORKOUT_KEY, workouts.get((Integer) selectedView.getTag()));
+                startActivity(intent);
+            }
+        });
+        workoutView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(final View selectedView) {
+                new AlertDialog.Builder(context)
+                        // TODO - Fix the get tag, because when a workout is deleted above another workout and the workout underneath than is deleted... The index position is all fucked up and the tag is therefore wrong
+                        .setMessage(getString(R.string.deletion, workouts.get((Integer) selectedView.getTag()).getTitle()))
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Workout workoutToBeRemoved = workouts.get(Integer.parseInt(selectedView.getTag().toString()));
+                                db.workoutDao().deleteWorkout(workoutToBeRemoved);
+                                linearLayout.removeView(selectedView);
+                                workouts.remove(workoutToBeRemoved);
+                                setScheduledWorkoutCard();
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // Do nothing
+                            }
+                        }).create().show();
+                return true;
+            }
+        });
+
+        return workoutView;
+    }
+
+    private void addSpaceInLinearLayout(int index) {
+        Space space = new Space(context);
+        int spaceBetweenCardsDP = (int) (getResources().getDimension(R.dimen.space_between_workout_card) / getResources().getDisplayMetrics().density);
+        space.setMinimumHeight(spaceBetweenCardsDP);
+        linearLayout.addView(space, index);
     }
 }
