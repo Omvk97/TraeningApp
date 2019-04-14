@@ -29,7 +29,7 @@ public class StartWorkoutActivity extends AppCompatActivity implements OnNoteLis
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         exercisesRV.setLayoutManager(linearLayoutManager);
-        StartedWorkoutAdapter adapter = new StartedWorkoutAdapter(selectedWorkout.getWorkoutExercises(), this);
+        StartedWorkoutAdapter adapter = new StartedWorkoutAdapter(selectedWorkout.getExercises(), this);
         exercisesRV.setAdapter(adapter);
     }
 

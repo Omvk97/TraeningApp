@@ -46,7 +46,7 @@ public class StartedWorkoutAdapter extends RecyclerView.Adapter<StartedWorkoutAd
             TextView setReps = tester.findViewById(R.id.setRepsTxt);
             int indexOfSet = mWorkoutExercises.get(i).getSets().indexOf(set);
             setNumber.setText(Integer.toString(indexOfSet + 1));
-            bestSetHistory.setText(mWorkoutExercises.get(i).getBestHistory(indexOfSet));
+            bestSetHistory.setText(mWorkoutExercises.get(i).getBestSet(indexOfSet));
             setWeightTxt.setText(mWorkoutExercises.get(i).getLastPerformedSetWeight());
             setReps.setText(mWorkoutExercises.get(i).getLastPerformedSetReps());
             tableLayout.addView(tester);

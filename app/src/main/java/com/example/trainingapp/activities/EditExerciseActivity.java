@@ -2,7 +2,6 @@ package com.example.trainingapp.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -10,9 +9,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 
-import com.example.trainingapp.WorkoutExercise;
 import com.example.trainingapp.R;
 import com.example.trainingapp.Workout;
+import com.example.trainingapp.WorkoutExercise;
 
 public class EditExerciseActivity extends AppCompatActivity {
     // TODO - MAYBE MAKE THIS INTO A FRAGMENT AND ALSO EXERCISEHISTORY ACTIVITY AND THEN THE USER SHOULD BE ABLE TO NAVIGATE USING A BOTTOM BAR UNDER AN "EXERCISES" TAB BETWEEN THE INFORMATION AND HISTORY
@@ -56,7 +55,7 @@ public class EditExerciseActivity extends AppCompatActivity {
             if (mSelectedWorkoutExercise == null) {
                 mSelectedWorkoutExercise = new WorkoutExercise(""); // if nothing has been passed to bundle a new exercise is to be created
             }
-            selectedWorkout = (Workout) bundle.get(WorkoutActivity.SELECTED_WORKOUT_KEY);
+            selectedWorkout = (Workout) bundle.get(WorkoutActivity.SELECTED_WORKOUT_ID_KEY);
         }
     }
 
@@ -131,11 +130,11 @@ public class EditExerciseActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // TODO - ADD DATABASE SUPPORT WHERE IT ADDS IT TO THE DATABSE SO THIS IS NOT AFHÆNGIG AF SELECEDWORKOUT AS THAT MAKES NO SENSE
+/*        // TODO - ADD DATABASE SUPPORT WHERE IT ADDS IT TO THE DATABSE SO THIS IS NOT AFHÆNGIG AF SELECEDWORKOUT AS THAT MAKES NO SENSE
         Intent addExerciseIntent = new Intent(this, AddExerciseActivity.class);
         saveExerciseName();
         addExerciseIntent.putExtra(AddExerciseActivity.EXERCISE_TO_PASSALONG, mSelectedWorkoutExercise);
-        addExerciseIntent.putExtra(WorkoutActivity.SELECTED_WORKOUT_KEY, selectedWorkout);
-        startActivity(addExerciseIntent);
+        addExerciseIntent.putExtra(WorkoutActivity.SELECTED_WORKOUT_ID_KEY, selectedWorkout);
+        startActivity(addExerciseIntent);*/
     }
 }

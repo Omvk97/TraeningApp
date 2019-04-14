@@ -1,24 +1,53 @@
 package com.example.trainingapp;
 
-import android.widget.ImageView;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 
 public class PreDefinedExercise { // TODO - This class is to be saved into a database with all the fields with its own table which is to be used when adding exercises, creating own exercises and so fourth
+    private long id;
+    private HashMap<Date, ArrayList<ExerciseSet>> sethistory;
     private MuscleCategory exerciseMuscleCategory;
     private Category category;
-    private ImageView picture;
-    private String exerciseName = "";
-    private ExerciseHistory exerciseHistory;
+    private String pictureURL;
+    private String exerciseName;
 
-    public PreDefinedExercise() {
-        exerciseHistory = new ExerciseHistory();
+    public PreDefinedExercise(String exerciseName) {
+        this.exerciseName = exerciseName;
     }
 
-    public ImageView getPicture() {
-        return picture;
+    public long getId() {
+        return id;
     }
 
-    public void setPicture(ImageView picture) {
-        this.picture = picture;
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getLastPerformedSetWeight() {
+        /*return Double.toString(lastPerformedSet.getWeight());*/
+        // TODO - return the latest weight based on date from setHIstory Map
+        return "50";
+    }
+
+    public String getLastPerformedSetReps() {
+        /*return Integer.toString(lastPerformedSet.getReps());*/
+        // TODO - return the latest reps based on date from setHIstory Map
+        return "8";
+    }
+
+    public String getBestSet(int index) {
+        // TODO BASED ON INDEX OF ARRAYLIST (THE INDEX REPRESENTS THE ORDER OF THE SETS PERFORMED)
+        return "50 X 22";
+    }
+
+    public String getPictureURL() {
+        return pictureURL;
+    }
+
+    public void setPictureURL(String pictureURL) {
+        this.pictureURL = pictureURL;
     }
 
     public String getExerciseName() {
@@ -29,20 +58,8 @@ public class PreDefinedExercise { // TODO - This class is to be saved into a dat
         this.exerciseName = exerciseName;
     }
 
-    public void setExerciseHistory(ExerciseHistory exerciseHistory) {
-        this.exerciseHistory = exerciseHistory;
-    }
-
-    public String getBestHistory(int setNumber) {
-        return exerciseHistory.getBestSet(setNumber);
-    }
-
-    public String getLastPerformedSetWeight() {
-        return Double.toString(exerciseHistory.getLastPerformedSet().getWeight());
-    }
-
-    public String getLastPerformedSetReps() {
-        return Integer.toString(exerciseHistory.getLastPerformedSet().getReps());
+    public void addNewExerciseSetHistory(Date date) {
+        sethistory.put(date, new ArrayList<>(Arrays.asList(new ExerciseSet(), new ExerciseSet(), new ExerciseSet()))); // TODO - WHEN A WORKOUT IS STARTED A NEW ENTRY IS TO BE MADE AND RECORDED HERE SO FUCKING SMART DUDE
     }
 
     public MuscleCategory getExerciseMuscleCategory() {

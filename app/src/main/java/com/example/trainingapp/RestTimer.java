@@ -1,10 +1,6 @@
 package com.example.trainingapp;
 
-import java.io.Serializable;
-
-public class RestTimer implements Serializable {
-    private static final long serialVersionUID = 5L;
-
+public class RestTimer {
     private int totalMiliseconds;
     private int minutes;
     private int seconds;
@@ -40,5 +36,13 @@ public class RestTimer implements Serializable {
         int miliSecInAMinute = 60000;
         int miliSecInASecond = 1000;
         totalMiliseconds = (minutes * miliSecInAMinute) + (seconds * miliSecInASecond);
+    }
+
+    @Override
+    public String toString() {
+        return "RestTimer{" +
+                "minutes=" + minutes +
+                ", seconds=" + seconds +
+                '}';
     }
 }

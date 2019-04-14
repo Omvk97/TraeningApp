@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.Space;
 import android.widget.TextView;
 
-import com.example.trainingapp.AppDatabase;
+import com.example.trainingapp.DatabaseHelper;
 import com.example.trainingapp.R;
 import com.example.trainingapp.Workout;
 
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private Calendar currentDate = Calendar.getInstance();
     private LinearLayout linearLayout;
     private boolean noScheduledWorkoutTextAdded = false;
-    private AppDatabase db;
+    private DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,24 +40,25 @@ public class MainActivity extends AppCompatActivity {
         linearLayout = findViewById(R.id.allWorkoutsLinLay);
         currentDate.setTimeZone(TimeZone.getDefault());
         context = this;
-        db = AppDatabase.getAppDatabase(this);
-        workouts.addAll(db.workoutDao().getAllWorkouts());
+        db = DatabaseHelper.getInstance(this);
+        workouts.addAll(db.getAllWorkouts());
         setAllRoutinesInLinearLayout();
         setScheduledWorkoutCard();
 
     }
 
     public void startWorkout(View view) {
-        Intent startWorkoutIntent = new Intent(this, StartWorkoutActivity.class);
+/*        Intent startWorkoutIntent = new Intent(this, StartWorkoutActivity.class);
         startWorkoutIntent.putExtra(STARTED_WORKOUT_KEY, workouts.get((Integer) view.getTag()));
-        startActivity(startWorkoutIntent);
+        startActivity(startWorkoutIntent);*/
     }
 
     public void addTrainingRoutine(View v) {
         Workout newWorkout = new Workout();
-        long idOfInsertedWorkout = db.workoutDao().insertWorkout(newWorkout);
+        long idOfInsertedWorkout = db.insertWorkout(newWorkout);
+        newWorkout.setId(idOfInsertedWorkout);
         Intent intent = new Intent(this, WorkoutActivity.class);
-        intent.putExtra(WorkoutActivity.SELECTED_WORKOUT_KEY, db.workoutDao().getWorkoutByID(idOfInsertedWorkout));
+        intent.putExtra(WorkoutActivity.SELECTED_WORKOUT_ID_KEY, idOfInsertedWorkout);
         startActivity(intent);
     }
 
@@ -112,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View selectedView) {
                 Intent intent = new Intent(getApplicationContext(), WorkoutActivity.class);
-                intent.putExtra(WorkoutActivity.SELECTED_WORKOUT_KEY, workouts.get((Integer) selectedView.getTag()));
+                intent.putExtra(WorkoutActivity.SELECTED_WORKOUT_ID_KEY, workouts.get((Integer) selectedView.getTag()).getId());
                 startActivity(intent);
             }
         });
@@ -125,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 Workout workoutToBeRemoved = workouts.get(Integer.parseInt(selectedView.getTag().toString()));
-                                db.workoutDao().deleteWorkout(workoutToBeRemoved);
+                                db.deleteWorkout(workoutToBeRemoved);
                                 linearLayout.removeView(selectedView);
                                 workouts.remove(workoutToBeRemoved);
                                 setScheduledWorkoutCard();

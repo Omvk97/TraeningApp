@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,7 +17,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.trainingapp.AppDatabase;
+import com.example.trainingapp.DatabaseHelper;
 import com.example.trainingapp.R;
 import com.example.trainingapp.Workout;
 import com.example.trainingapp.adapters.OnNoteListener;
@@ -24,15 +25,14 @@ import com.example.trainingapp.adapters.WorkoutExerciseAdapter;
 
 public class WorkoutActivity extends AppCompatActivity implements OnNoteListener {
     private static final String TAG = "WorkoutActivity";
-    public static final String SELECTED_WORKOUT_KEY = "selected selectedWorkout";
+    public static final String SELECTED_WORKOUT_ID_KEY = "selected selectedWorkout";
     private Workout selectedWorkout = null;
     private RecyclerView exerciseRV;
     private WorkoutExerciseAdapter adapter;
-    private Bundle extras;
     private EditText restTimerminText;
     private EditText restTimersecText;
     private AlertDialog alertDialog;
-    private AppDatabase db;
+    private DatabaseHelper db;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -45,7 +45,7 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
         switch (item.getItemId()) {
             case R.id.menuItemEditWorkoutProp:
                 Intent editWorkoutIntent = new Intent(this, EditWorkoutActivity.class);
-                editWorkoutIntent.putExtra(SELECTED_WORKOUT_KEY, selectedWorkout);
+                editWorkoutIntent.putExtra(SELECTED_WORKOUT_ID_KEY, selectedWorkout.getId());
                 startActivity(editWorkoutIntent);
                 break;
             case R.id.menuItemAdjustTimer:
@@ -59,10 +59,10 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout_view);
 
-        db = AppDatabase.getAppDatabase(this);
+        db = DatabaseHelper.getInstance(this);
 
         setUp();
-        adapter = new WorkoutExerciseAdapter(selectedWorkout.getWorkoutExercises(), this);
+        adapter = new WorkoutExerciseAdapter(selectedWorkout.getExercises(), this);
         exerciseRV.setAdapter(adapter);
     }
 
@@ -164,26 +164,26 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
     public void addExercise(View v) {
         Intent addExerciseIntent = new Intent(this, AddExerciseActivity.class);
         if (selectedWorkout != null) {
-            addExerciseIntent.putExtra(SELECTED_WORKOUT_KEY, selectedWorkout);
+            addExerciseIntent.putExtra(SELECTED_WORKOUT_ID_KEY, selectedWorkout.getId());
         }
         startActivity(addExerciseIntent);
     }
 
     @Override
     public void onNoteClick(int position) {
-        Intent editExerciseIntent = new Intent(this, EditExerciseActivity.class);
-        editExerciseIntent.putExtra(AddExerciseActivity.EXERCISE_TO_PASSALONG, selectedWorkout.getWorkoutExercises().get(position));
-        editExerciseIntent.putExtra(WorkoutActivity.SELECTED_WORKOUT_KEY, selectedWorkout);
-        startActivity(editExerciseIntent);
+/*        Intent editExerciseIntent = new Intent(this, EditExerciseActivity.class);
+        editExerciseIntent.putExtra(AddExerciseActivity.EXERCISE_TO_PASSALONG, selectedWorkout.getExercises().get(position));
+        editExerciseIntent.putExtra(WorkoutActivity.SELECTED_WORKOUT_ID_KEY, selectedWorkout);
+        startActivity(editExerciseIntent);*/
     }
 
     @Override
     public void onLongNoteClick(final int position) {
         new AlertDialog.Builder(this)
-                .setMessage(getString(R.string.deletion, selectedWorkout.getWorkoutExercises().get(position).getExerciseName()))
+                .setMessage(getString(R.string.deletion, selectedWorkout.getExercises().get(position).getExerciseName()))
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        selectedWorkout.getWorkoutExercises().remove(selectedWorkout.getWorkoutExercises().get(position));
+                        selectedWorkout.getExercises().remove(selectedWorkout.getExercises().get(position));
                         adapter.notifyDataSetChanged();
                     }
                 })
@@ -200,10 +200,11 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         exerciseRV.setLayoutManager(linearLayoutManager);
-        extras = getIntent().getExtras();
-
-        if (extras != null) {
-            selectedWorkout = (Workout) extras.getSerializable(SELECTED_WORKOUT_KEY);
+        long selectedWorkoutID = getIntent().getLongExtra(SELECTED_WORKOUT_ID_KEY, -1);
+        Log.d(TAG, "setUp: selectedWorkoutID: " + selectedWorkoutID);
+        if (selectedWorkoutID != -1) {
+            selectedWorkout = db.getWorkout(selectedWorkoutID);
+            Log.d(TAG, "setUp: selectedWorkout: " + selectedWorkout.toString());
         }
 
         Toolbar toolbar = findViewById(R.id.routineDetailsToolbar);
@@ -218,14 +219,11 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-/*        Gson gson = new Gson();
-        String json = gson.toJson(selectedWorkout.getWorkoutExercises());
-        Log.d(TAG, "setUp: " + json);*/
     }
 
     @Override
     public void onBackPressed() {
-        db.workoutDao().updateWorkout(selectedWorkout);
+        db.updateWorkout(selectedWorkout);
         Intent mainActivityIntent = new Intent(this, MainActivity.class);
         startActivity(mainActivityIntent);
     }

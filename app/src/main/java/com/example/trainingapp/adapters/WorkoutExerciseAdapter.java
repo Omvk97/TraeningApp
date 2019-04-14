@@ -48,9 +48,9 @@ public class WorkoutExerciseAdapter extends RecyclerView.Adapter<WorkoutExercise
             TextView setWeightTxt = tester.findViewById(R.id.setWeightTxt);
             TextView setReps = tester.findViewById(R.id.setRepsTxt);
             setNumber.setText(Integer.toString(mWorkoutExercises.get(i).getSets().indexOf(set) + 1));
-            bestSetHistory.setText(mWorkoutExercises.get(i).getBestHistory(i));
-            setWeightTxt.setText("50");
-            setReps.setText("8");
+            bestSetHistory.setText(mWorkoutExercises.get(i).getBestSet(mWorkoutExercises.indexOf(set)));
+            setWeightTxt.setText(mWorkoutExercises.get(i).getLastPerformedSetWeight());
+            setReps.setText(mWorkoutExercises.get(i).getLastPerformedSetReps());
             tableLayout.addView(tester);
         }
     }

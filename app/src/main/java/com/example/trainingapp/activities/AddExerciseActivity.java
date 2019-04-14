@@ -1,7 +1,6 @@
 package com.example.trainingapp.activities;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
@@ -14,9 +13,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.example.trainingapp.WorkoutExercise;
+import com.example.trainingapp.DatabaseHelper;
+import com.example.trainingapp.PreDefinedExercise;
 import com.example.trainingapp.R;
 import com.example.trainingapp.Workout;
+import com.example.trainingapp.WorkoutExercise;
 import com.example.trainingapp.adapters.AddExerciseAdapter;
 import com.example.trainingapp.adapters.OnNoteListener;
 
@@ -26,11 +27,12 @@ import java.util.List;
 public class AddExerciseActivity extends AppCompatActivity implements OnNoteListener {
     private static final String TAG = "AddExerciseActivity";
     public static final String EXERCISE_TO_PASSALONG = "exercise to be edited";
-    private List<WorkoutExercise> mWorkoutExercises = new ArrayList<>();
+    private List<PreDefinedExercise> mWorkoutExercises = new ArrayList<>();
     private RecyclerView exerciseRV;
     private AddExerciseAdapter adapter;
     private Workout selectedWorkout;
-    private Bundle extras;
+    private long selectedWorkoutID;
+    private DatabaseHelper db;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -49,10 +51,10 @@ public class AddExerciseActivity extends AppCompatActivity implements OnNoteList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_exercise);
-
-        extras = getIntent().getExtras();
-        if (extras != null) {
-            selectedWorkout = (Workout) extras.getSerializable(WorkoutActivity.SELECTED_WORKOUT_KEY);
+        db = DatabaseHelper.getInstance(this);
+        selectedWorkoutID = getIntent().getLongExtra(WorkoutActivity.SELECTED_WORKOUT_ID_KEY, -1);
+        if (selectedWorkoutID != -1) {
+            selectedWorkout = db.getWorkout(selectedWorkoutID);
         }
 
         // Change toolbar title to the selected exercise
@@ -73,17 +75,17 @@ public class AddExerciseActivity extends AppCompatActivity implements OnNoteList
 
     public void setUpTestExercises() {
         // TODO - GET THE EXERCISES FROM A DATABASE
-        mWorkoutExercises.add(new WorkoutExercise("Back Extension"));
-        mWorkoutExercises.add(new WorkoutExercise("Seated Shoulder Press"));
-        mWorkoutExercises.add(new WorkoutExercise("Deadlift"));
-        mWorkoutExercises.add(new WorkoutExercise("Curl"));
-        mWorkoutExercises.add(new WorkoutExercise("Bench Press"));
-        mWorkoutExercises.add(new WorkoutExercise("Lunge"));
+        mWorkoutExercises.add(new PreDefinedExercise("Back Extension"));
+        mWorkoutExercises.add(new PreDefinedExercise("Seated Shoulder Press"));
+        mWorkoutExercises.add(new PreDefinedExercise("Deadlift"));
+        mWorkoutExercises.add(new PreDefinedExercise("Curl"));
+        mWorkoutExercises.add(new PreDefinedExercise("Bench Press"));
+        mWorkoutExercises.add(new PreDefinedExercise("Lunge"));
 
-        WorkoutExercise editedWorkoutExercise = ((WorkoutExercise) extras.getSerializable(EXERCISE_TO_PASSALONG));
+/*        WorkoutExercise editedWorkoutExercise = ((WorkoutExercise) selectedWorkoutID.getSerializable(EXERCISE_TO_PASSALONG));
         if (editedWorkoutExercise != null) {
             mWorkoutExercises.add(editedWorkoutExercise);
-        }
+        }*/
     }
 
     private void setupToolbar() {
@@ -101,32 +103,33 @@ public class AddExerciseActivity extends AppCompatActivity implements OnNoteList
     }
 
     public void createCustomExercise(View v) {
-        Intent editExercise = new Intent(this, EditExerciseActivity.class);
-        editExercise.putExtra(WorkoutActivity.SELECTED_WORKOUT_KEY, selectedWorkout);
-        startActivity(editExercise);
+/*        Intent editExercise = new Intent(this, EditExerciseActivity.class);
+        editExercise.putExtra(WorkoutActivity.SELECTED_WORKOUT_ID_KEY, selectedWorkout);
+        startActivity(editExercise);*/
     }
 
     public void editExercise(View v) {
         // TODO WorkoutExercise edit AND VISUAL REPRESENTATION THAT YOU HAVE CLICKED
-        Intent editExercise = new Intent(this, EditExerciseActivity.class);
-        editExercise.putExtra(WorkoutActivity.SELECTED_WORKOUT_KEY, selectedWorkout);
+/*        Intent editExercise = new Intent(this, EditExerciseActivity.class);
+        editExercise.putExtra(WorkoutActivity.SELECTED_WORKOUT_ID_KEY, selectedWorkout);
         editExercise.putExtra(EXERCISE_TO_PASSALONG, mWorkoutExercises.get((Integer) v.getTag()));
-        startActivity(editExercise);
+        startActivity(editExercise);*/
     }
 
 
     @Override
     public void onNoteClick(final int position) {
         View contextView = findViewById(R.id.allExercisesRV);
-        mWorkoutExercises.get(position).setGeneralRestTimer(selectedWorkout.getGeneralRestTimer());
-        selectedWorkout.addExercise(mWorkoutExercises.get(position));
+        final WorkoutExercise exerciseToBeAdded = (WorkoutExercise) mWorkoutExercises.get(position);
+        exerciseToBeAdded.setGeneralRestTimer(selectedWorkout.getWorkoutRestTimer());
+        selectedWorkout.addExercise(exerciseToBeAdded);
         String snackbarMessage = getString(R.string.exercise_added, mWorkoutExercises.get(position).getExerciseName());
         Snackbar addedExerciseSnack = Snackbar.make(contextView, snackbarMessage, Snackbar.LENGTH_LONG);
         addedExerciseSnack.setAction(R.string.undo_string, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (selectedWorkout.getWorkoutExercises().contains(mWorkoutExercises.get(position))) {
-                    selectedWorkout.removeExercise(mWorkoutExercises.get(position));
+                if (selectedWorkout.getExercises().contains(mWorkoutExercises.get(position))) {
+                    selectedWorkout.removeExercise(exerciseToBeAdded);
                 }
             }
         });
@@ -152,8 +155,8 @@ public class AddExerciseActivity extends AppCompatActivity implements OnNoteList
 
     @Override
     public void onBackPressed() {
-        Intent goBackToWorkout = new Intent(this, WorkoutActivity.class);
-        goBackToWorkout.putExtra(WorkoutActivity.SELECTED_WORKOUT_KEY, selectedWorkout);
-        startActivity(goBackToWorkout);
+/*        Intent goBackToWorkout = new Intent(this, WorkoutActivity.class);
+        goBackToWorkout.putExtra(WorkoutActivity.SELECTED_WORKOUT_ID_KEY, selectedWorkout);
+        startActivity(goBackToWorkout);*/
     }
 }

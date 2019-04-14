@@ -1,20 +1,19 @@
 package com.example.trainingapp;
 
-import java.io.Serializable;
+import android.util.Pair;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
-public class WorkoutExercise extends PreDefinedExercise implements Serializable {
-    private static final long serialVersionUID = 2L;
-    private List<ExerciseSet> sets;
+public class WorkoutExercise extends PreDefinedExercise {
     private RestTimer restTimer = null;
+    private Pair<Date, ArrayList<ExerciseSet>> workoutToBePerformedScabelon;
 
     public WorkoutExercise(String exerciseName) {
-        this.sets = new ArrayList<>();
-        int INITIAL_NUM_OF_SETS = 3;
-        for (int i = 0; i < INITIAL_NUM_OF_SETS; i++) {
-            sets.add(new ExerciseSet());
-        }
+        super(exerciseName);
+        workoutToBePerformedScabelon = new Pair<>(new Date(), new ArrayList<ExerciseSet>(Arrays.asList(new ExerciseSet(), new ExerciseSet(), new ExerciseSet())));
     }
 
     public void setGeneralRestTimer(RestTimer workoutRestTimer) {
@@ -34,23 +33,19 @@ public class WorkoutExercise extends PreDefinedExercise implements Serializable 
     }
 
     public List<ExerciseSet> getSets() {
-        return sets;
+        return workoutToBePerformedScabelon.second;
     }
 
-    public void setSets(List<ExerciseSet> sets) {
-        this.sets = sets;
+    public void setSets(List<ExerciseSet> sets, Date date) {
+        this.workoutToBePerformedScabelon = new Pair<>(date, (ArrayList<ExerciseSet>) sets);
     }
 
-    public void removeSet() {
-
+    public void removeSet(ExerciseSet set) {
+        workoutToBePerformedScabelon.second.remove(set);
     }
 
     public void addSet(ExerciseSet set) {
-        sets.add(set);
-    }
-
-    public String getNumSets() {
-        return Integer.toString(sets.size());
+        workoutToBePerformedScabelon.second.add(set);
     }
 
     public void startTimer() {

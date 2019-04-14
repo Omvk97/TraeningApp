@@ -1,6 +1,5 @@
 package com.example.trainingapp.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -32,7 +31,7 @@ public class EditWorkoutActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            selectedWorkout = (Workout) extras.getSerializable(WorkoutActivity.SELECTED_WORKOUT_KEY);
+            selectedWorkout = (Workout) extras.getSerializable(WorkoutActivity.SELECTED_WORKOUT_ID_KEY);
         }
         initialiseFields();
         setUpToolbar();
@@ -103,10 +102,10 @@ public class EditWorkoutActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         // TODO - ADD THIS TO HOME BUTTON IN TOOLBAR
-        selectedWorkout.setTitle(workoutName.getText().toString());
+/*        selectedWorkout.setTitle(workoutName.getText().toString());
         selectedWorkout.setDescription(description.getText().toString());
         Intent goBackToWorkoutView = new Intent(this, WorkoutActivity.class);
-        goBackToWorkoutView.putExtra(WorkoutActivity.SELECTED_WORKOUT_KEY, selectedWorkout);
-        startActivity(goBackToWorkoutView);
+        goBackToWorkoutView.putExtra(WorkoutActivity.SELECTED_WORKOUT_ID_KEY, selectedWorkout);
+        startActivity(goBackToWorkoutView);*/
     }
 }

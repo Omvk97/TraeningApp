@@ -2,32 +2,22 @@ package com.example.trainingapp;
 
 import android.content.Context;
 
-import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-@Entity(tableName = "workout")
-public class Workout implements Serializable {
-    @PrimaryKey(autoGenerate = true)
+public class Workout {
     private long id;
-    @ColumnInfo(name = "title")
     private String title = "New Workout";
-    @ColumnInfo(name = "description")
     private String description = "";
-    private ArrayList<WorkoutExercise> mWorkoutExercises = new ArrayList<>();
-    @ColumnInfo(name = "last_training_date")
+    private ArrayList<WorkoutExercise> exercises = new ArrayList<>();
     private Date lastTraining;
     private ArrayList<WeekDay> scheduledWeekDays = new ArrayList<>();
-    private RestTimer generalRestTimer;
+    private RestTimer workoutRestTimer;
 
     public Workout() {
         lastTraining = new Date(); // TODO - Fix so when a new workout is created the last training is not today
-        generalRestTimer = new RestTimer(1, 30);
+        workoutRestTimer = new RestTimer(1, 30);
     }
 
     public Workout(int id, String title, String description, long dateMiliSeconds) {
@@ -35,7 +25,7 @@ public class Workout implements Serializable {
         this.title = title;
         this.description = description;
         this.lastTraining = new Date(dateMiliSeconds);
-        generalRestTimer = new RestTimer(1, 30);
+        workoutRestTimer = new RestTimer(1, 30);
 
     }
 
@@ -59,24 +49,24 @@ public class Workout implements Serializable {
         this.scheduledWeekDays = scheduledWeekDays;
     }
 
-    public void setGeneralRestTimer(RestTimer generalRestTimer) {
-        this.generalRestTimer = generalRestTimer;
+    public void setWorkoutRestTimer(RestTimer workoutRestTimer) {
+        this.workoutRestTimer = workoutRestTimer;
     }
 
-    public ArrayList<WorkoutExercise> getWorkoutExercises() {
-        return mWorkoutExercises;
+    public ArrayList<WorkoutExercise> getExercises() {
+        return exercises;
     }
 
-    public void setWorkoutExercises(ArrayList<WorkoutExercise> workoutExercises) {
-        this.mWorkoutExercises = workoutExercises;
+    public void setExercises(ArrayList<WorkoutExercise> exercises) {
+        this.exercises = exercises;
     }
 
     public void addExercise(WorkoutExercise workoutExercise) {
-        mWorkoutExercises.add(workoutExercise);
+        exercises.add(workoutExercise);
     }
 
     public void removeExercise(WorkoutExercise workoutExercise) {
-        mWorkoutExercises.remove(workoutExercise);
+        exercises.remove(workoutExercise);
     }
 
     public String getLastTraining(Context applicationContext) {
@@ -129,20 +119,20 @@ public class Workout implements Serializable {
     }
 
     public int getRestTimerMinutes() {
-        return generalRestTimer.getMinutes();
+        return workoutRestTimer.getMinutes();
     }
 
     public int getRestTimerSeconds() {
-        return generalRestTimer.getSeconds();
+        return workoutRestTimer.getSeconds();
     }
 
-    public RestTimer getGeneralRestTimer() {
-        return generalRestTimer;
+    public RestTimer getWorkoutRestTimer() {
+        return workoutRestTimer;
     }
 
     public void setGeneralRestTimer(int minutes, int seconds) {
-        generalRestTimer.setMinutes(minutes);
-        generalRestTimer.setSeconds(seconds);
+        workoutRestTimer.setMinutes(minutes);
+        workoutRestTimer.setSeconds(seconds);
     }
 
     public enum WeekDay {
@@ -162,7 +152,7 @@ public class Workout implements Serializable {
     @Override
     public String toString() {
         return "Workout{" +
-                ", mWorkoutExercises=" + mWorkoutExercises +
+                ", exercises=" + exercises +
                 ", lastTraining=" + lastTraining +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +

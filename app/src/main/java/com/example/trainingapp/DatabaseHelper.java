@@ -6,12 +6,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 6;
 
     private static final String DATABASE_NAME = "workouts_db";
 
@@ -31,12 +33,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(WorkoutContract.SQL_CREATE_ENTRIES);
+        db.execSQL(DatabaseContract.WorkoutTable.SQL_CREATE_WORKOUT_TABLE);
+        db.execSQL(DatabaseContract.PreDefinedExerciseTable.SQL_CREATE_PREDEFINED_TABLE);
+        db.execSQL(DatabaseContract.WorkoutExerciseTable.SQL_CREATE_WORKOUT_EXERCISE_TABLE);
+        db.execSQL(DatabaseContract.ExerciseSetTable.SQL_CREATE_EXERCISE_SET_TABLE);
+        db.execSQL(DatabaseContract.WorkoutExerciseLinkTable.SQL_CREATE_WORKOUT_EXERCISE_LINK_TABLE);
+        /*db.execSQL(DatabasePreDefinedExercises.insertion);*/
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + WorkoutContract.WorkoutEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + DatabaseContract.WorkoutTable.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + DatabaseContract.PreDefinedExerciseTable.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + DatabaseContract.WorkoutExerciseTable.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + DatabaseContract.ExerciseSetTable.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + DatabaseContract.WorkoutExerciseLinkTable.TABLE_NAME);
         onCreate(db);
     }
 
@@ -44,33 +55,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(WorkoutContract.WorkoutEntry.COLUMN_WORKOUT_TITLE, workout.getTitle());
-        values.put(WorkoutContract.WorkoutEntry.COLUMN_DESCRIPTION, workout.getDescription());
-        values.put(WorkoutContract.WorkoutEntry.COLUMN_LAST_TRAINING, workout.getLastTraining().getTime());
+        values.put(DatabaseContract.WorkoutTable.COLUMN_WORKOUT_TITLE, workout.getTitle());
+        values.put(DatabaseContract.WorkoutTable.COLUMN_DESCRIPTION, workout.getDescription());
+        values.put(DatabaseContract.WorkoutTable.COLUMN_LAST_TRAINING, workout.getLastTraining().getTime());
+        String scheduledWeekDayJson = new Gson().toJson(workout.getScheduledWeekDays());
+        values.put(DatabaseContract.WorkoutTable.COLUMN_SCHEDULED_WEEK_DAYS, scheduledWeekDayJson);
+        values.put(DatabaseContract.WorkoutTable.COLUMN_REST_TIMER, workout.getWorkoutRestTimer().toString());
 
-        long idOfInsertedWorkout = db.insert(WorkoutContract.WorkoutEntry.TABLE_NAME, null, values);
+        long idOfInsertedWorkout = db.insert(DatabaseContract.WorkoutTable.TABLE_NAME, null, values);
 
         db.close();
         return idOfInsertedWorkout;
     }
 
     public Workout getWorkout(long id) {
+        Workout workout = null;
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(WorkoutContract.WorkoutEntry.TABLE_NAME,
-                new String[]{WorkoutContract.WorkoutEntry.COLUMN_ID, WorkoutContract.WorkoutEntry.COLUMN_WORKOUT_TITLE, WorkoutContract.WorkoutEntry.COLUMN_DESCRIPTION, WorkoutContract.WorkoutEntry.COLUMN_LAST_TRAINING},
-                WorkoutContract.WorkoutEntry.COLUMN_ID + "=?",
+        Cursor cursor = db.query(DatabaseContract.WorkoutTable.TABLE_NAME,
+                new String[]{DatabaseContract.WorkoutTable.COLUMN_ID, DatabaseContract.WorkoutTable.COLUMN_WORKOUT_TITLE, DatabaseContract.WorkoutTable.COLUMN_DESCRIPTION, DatabaseContract.WorkoutTable.COLUMN_LAST_TRAINING},
+                DatabaseContract.WorkoutTable.COLUMN_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
-        if (cursor != null) {
-            cursor.moveToFirst();
-        }
 
-        Workout workout = new Workout(
-                cursor.getInt(cursor.getColumnIndex(WorkoutContract.WorkoutEntry.COLUMN_ID)),
-                cursor.getString(cursor.getColumnIndex(WorkoutContract.WorkoutEntry.COLUMN_WORKOUT_TITLE)),
-                cursor.getString(cursor.getColumnIndex(WorkoutContract.WorkoutEntry.COLUMN_DESCRIPTION)),
-                cursor.getLong(cursor.getColumnIndex(WorkoutContract.WorkoutEntry.COLUMN_LAST_TRAINING))
-        );
+        if (cursor != null && cursor.moveToFirst()) {
+            workout = new Workout(
+                    cursor.getInt(cursor.getColumnIndex(DatabaseContract.WorkoutTable.COLUMN_ID)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseContract.WorkoutTable.COLUMN_WORKOUT_TITLE)),
+                    cursor.getString(cursor.getColumnIndex(DatabaseContract.WorkoutTable.COLUMN_DESCRIPTION)),
+                    cursor.getLong(cursor.getColumnIndex(DatabaseContract.WorkoutTable.COLUMN_LAST_TRAINING))
+            );
+        }
         db.close();
         return workout;
     }
@@ -78,7 +92,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<Workout> getAllWorkouts() {
         List<Workout> workouts = new ArrayList<>();
 
-        String selectQuery = "SELECT * FROM " + WorkoutContract.WorkoutEntry.TABLE_NAME;
+        String selectQuery = "SELECT * FROM " + DatabaseContract.WorkoutTable.TABLE_NAME;
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -86,10 +100,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Workout workout = new Workout(
-                        cursor.getInt(cursor.getColumnIndex(WorkoutContract.WorkoutEntry.COLUMN_ID)),
-                        cursor.getString(cursor.getColumnIndex(WorkoutContract.WorkoutEntry.COLUMN_WORKOUT_TITLE)),
-                        cursor.getString(cursor.getColumnIndex(WorkoutContract.WorkoutEntry.COLUMN_DESCRIPTION)),
-                        cursor.getLong(cursor.getColumnIndex(WorkoutContract.WorkoutEntry.COLUMN_LAST_TRAINING))
+                        cursor.getInt(cursor.getColumnIndex(DatabaseContract.WorkoutTable.COLUMN_ID)),
+                        cursor.getString(cursor.getColumnIndex(DatabaseContract.WorkoutTable.COLUMN_WORKOUT_TITLE)),
+                        cursor.getString(cursor.getColumnIndex(DatabaseContract.WorkoutTable.COLUMN_DESCRIPTION)),
+                        cursor.getLong(cursor.getColumnIndex(DatabaseContract.WorkoutTable.COLUMN_LAST_TRAINING))
                 );
                 workouts.add(workout);
             } while (cursor.moveToNext());
@@ -103,16 +117,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(WorkoutContract.WorkoutEntry.COLUMN_WORKOUT_TITLE, workout.getTitle());
-        values.put(WorkoutContract.WorkoutEntry.COLUMN_DESCRIPTION, workout.getDescription());
-        values.put(WorkoutContract.WorkoutEntry.COLUMN_LAST_TRAINING, workout.getLastTraining().getTime());
-        return db.update(WorkoutContract.WorkoutEntry.TABLE_NAME, values, WorkoutContract.WorkoutEntry.COLUMN_ID +
+        values.put(DatabaseContract.WorkoutTable.COLUMN_WORKOUT_TITLE, workout.getTitle());
+        values.put(DatabaseContract.WorkoutTable.COLUMN_DESCRIPTION, workout.getDescription());
+        values.put(DatabaseContract.WorkoutTable.COLUMN_LAST_TRAINING, workout.getLastTraining().getTime());
+        return db.update(DatabaseContract.WorkoutTable.TABLE_NAME, values, DatabaseContract.WorkoutTable.COLUMN_ID +
                 " = ?", new String[]{String.valueOf(workout.getId())});
     }
 
     public void deleteWorkout(Workout workout) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(WorkoutContract.WorkoutEntry.TABLE_NAME, WorkoutContract.WorkoutEntry.COLUMN_ID + " = ?",
+        db.delete(DatabaseContract.WorkoutTable.TABLE_NAME, DatabaseContract.WorkoutTable.COLUMN_ID + " = ?",
                 new String[]{String.valueOf(workout.getId())});
     }
 }

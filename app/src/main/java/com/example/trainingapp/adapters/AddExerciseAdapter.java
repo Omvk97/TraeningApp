@@ -9,16 +9,16 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.trainingapp.WorkoutExercise;
+import com.example.trainingapp.PreDefinedExercise;
 import com.example.trainingapp.R;
 
 import java.util.List;
 
 public class AddExerciseAdapter extends RecyclerView.Adapter<AddExerciseAdapter.ExerciseViewHolder> {
-    private List<WorkoutExercise> mWorkoutExercises;
+    private List<PreDefinedExercise> mWorkoutExercises;
     private OnNoteListener onNoteListener;
 
-    public AddExerciseAdapter(List<WorkoutExercise> workoutExercises, OnNoteListener onNoteListener) {
+    public AddExerciseAdapter(List<PreDefinedExercise> workoutExercises, OnNoteListener onNoteListener) {
         this.mWorkoutExercises = workoutExercises;
         this.onNoteListener = onNoteListener;
     }
