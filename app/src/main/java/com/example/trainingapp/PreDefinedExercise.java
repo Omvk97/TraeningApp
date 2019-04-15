@@ -1,20 +1,53 @@
 package com.example.trainingapp;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
+
+import com.example.trainingapp.TypeConverters.EnumConverter;
+import com.example.trainingapp.TypeConverters.SetHistoryConverter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 
-public class PreDefinedExercise { // TODO - This class is to be saved into a database with all the fields with its own table which is to be used when adding exercises, creating own exercises and so fourth
+@Entity(tableName = "preDefined_exercises")
+public class PreDefinedExercise {
+    @PrimaryKey(autoGenerate = true)
     private long id;
-    private HashMap<Date, ArrayList<ExerciseSet>> sethistory;
+    @ColumnInfo(name = "setHistory")
+    @TypeConverters(SetHistoryConverter.class)
+    private HashMap<Date, ArrayList<ExerciseSet>> sethistory = new HashMap<>();
+    @ColumnInfo(name = "muscleCategory")
+    @TypeConverters(EnumConverter.class)
     private MuscleCategory exerciseMuscleCategory;
+    @ColumnInfo(name = "category")
+    @TypeConverters(EnumConverter.class)
     private Category category;
+    @ColumnInfo(name = "picture_url")
     private String pictureURL;
+    @ColumnInfo(name = "name")
     private String exerciseName;
 
     public PreDefinedExercise(String exerciseName) {
         this.exerciseName = exerciseName;
+    }
+
+    public PreDefinedExercise(String exerciseName, MuscleCategory muscleCategory, Category category, String pictureURL) {
+        this(exerciseName);
+        this.exerciseMuscleCategory = muscleCategory;
+        this.category = category;
+        this.pictureURL = pictureURL;
+    }
+
+    public HashMap<Date, ArrayList<ExerciseSet>> getSethistory() {
+        return sethistory;
+    }
+
+    public void setSethistory(HashMap<Date, ArrayList<ExerciseSet>> sethistory) {
+        this.sethistory = sethistory;
     }
 
     public long getId() {
@@ -79,8 +112,8 @@ public class PreDefinedExercise { // TODO - This class is to be saved into a dat
     }
 
     public enum MuscleCategory {
-        CORE("Core"), BICEPS("Biceps"), TRICEPS("Triceps"), LOWERBACK("Lower-Back"),
-        UPPERBACK("Upper-Back"), CHEST("Chest"), LEGS("Legs"), SHOULDERS("Shoulders"), OTHER("Other");
+        CORE("Core"), BICEPS("Biceps"), TRICEPS("Triceps"), LOWERBACK("Lower Back"),
+        UPPERBACK("Upper Back"), CHEST("Chest"), LEGS("Legs"), SHOULDERS("Shoulders"), OTHER("Other");
 
         private final String stringRepresentation;
 
@@ -90,6 +123,15 @@ public class PreDefinedExercise { // TODO - This class is to be saved into a dat
 
         public String getStringRepresentation() {
             return stringRepresentation;
+        }
+
+        public static MuscleCategory getMuscleCategory(String stringRepresentation) {
+            for (MuscleCategory muscleCategory : values()) {
+                if (stringRepresentation.equalsIgnoreCase(muscleCategory.getStringRepresentation())) {
+                    return muscleCategory;
+                }
+            }
+            return null;
         }
     }
 
@@ -105,6 +147,15 @@ public class PreDefinedExercise { // TODO - This class is to be saved into a dat
 
         public String getStringRepresentation() {
             return stringRepresentation;
+        }
+
+        public static Category getCategory(String stringRepresentation) {
+            for (Category category : values()) {
+                if (category.getStringRepresentation().equalsIgnoreCase(stringRepresentation)) {
+                    return category;
+                }
+            }
+            return null;
         }
     }
 }

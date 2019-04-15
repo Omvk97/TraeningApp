@@ -14,8 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.Space;
 import android.widget.TextView;
 
-import com.example.trainingapp.DatabaseHelper;
 import com.example.trainingapp.R;
+import com.example.trainingapp.TrainingAppDatabase;
 import com.example.trainingapp.Workout;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private Calendar currentDate = Calendar.getInstance();
     private LinearLayout linearLayout;
     private boolean noScheduledWorkoutTextAdded = false;
-    private DatabaseHelper db;
+    private TrainingAppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
         linearLayout = findViewById(R.id.allWorkoutsLinLay);
         currentDate.setTimeZone(TimeZone.getDefault());
         context = this;
-        db = DatabaseHelper.getInstance(this);
-        workouts.addAll(db.getAllWorkouts());
+        db = TrainingAppDatabase.getInstance(this);
+        workouts.addAll(db.workoutDao().getAllWorkouts());
         setAllRoutinesInLinearLayout();
         setScheduledWorkoutCard();
 
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void addTrainingRoutine(View v) {
         Workout newWorkout = new Workout();
-        long idOfInsertedWorkout = db.insertWorkout(newWorkout);
+        long idOfInsertedWorkout = db.workoutDao().insertWorkout(newWorkout);
         newWorkout.setId(idOfInsertedWorkout);
         Intent intent = new Intent(this, WorkoutActivity.class);
         intent.putExtra(WorkoutActivity.SELECTED_WORKOUT_ID_KEY, idOfInsertedWorkout);
@@ -106,9 +106,8 @@ public class MainActivity extends AppCompatActivity {
         lastTrainingDone.setText(getString(R.string.lastTrainingDone, workout.getLastTraining(context)));
         routineTitle.setText(workout.getTitle());
         routineDays.setText(workout.getScheduledWeekDaysString());
-        workoutView.setTag(workouts.indexOf(workout)); // Setting the tag to the positon in the arraylist for later reference
-        startWorkoutBtn.setTag(workouts.indexOf(workout));
-
+        workoutView.setTag(String.valueOf(workout.getId())); // SETTING THE ID OF THE WORKOUT SO IT CAN BE GET FROM THE DATABASE
+        startWorkoutBtn.setTag(String.valueOf(workout.getId())); // SETTING THE ID OF THE WORKOUT SO IT CAN BE GET FROM THE DATABASE
         workoutView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View selectedView) {
@@ -126,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 Workout workoutToBeRemoved = workouts.get(Integer.parseInt(selectedView.getTag().toString()));
-                                db.deleteWorkout(workoutToBeRemoved);
+                                db.workoutDao().deleteWorkouts(workoutToBeRemoved);
                                 linearLayout.removeView(selectedView);
                                 workouts.remove(workoutToBeRemoved);
                                 setScheduledWorkoutCard();

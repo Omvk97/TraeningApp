@@ -16,6 +16,7 @@ import android.view.View;
 import com.example.trainingapp.DatabaseHelper;
 import com.example.trainingapp.PreDefinedExercise;
 import com.example.trainingapp.R;
+import com.example.trainingapp.TrainingAppDatabase;
 import com.example.trainingapp.Workout;
 import com.example.trainingapp.WorkoutExercise;
 import com.example.trainingapp.adapters.AddExerciseAdapter;
@@ -74,13 +75,9 @@ public class AddExerciseActivity extends AppCompatActivity implements OnNoteList
     }
 
     public void setUpTestExercises() {
-        // TODO - GET THE EXERCISES FROM A DATABASE
-        mWorkoutExercises.add(new PreDefinedExercise("Back Extension"));
-        mWorkoutExercises.add(new PreDefinedExercise("Seated Shoulder Press"));
-        mWorkoutExercises.add(new PreDefinedExercise("Deadlift"));
-        mWorkoutExercises.add(new PreDefinedExercise("Curl"));
-        mWorkoutExercises.add(new PreDefinedExercise("Bench Press"));
-        mWorkoutExercises.add(new PreDefinedExercise("Lunge"));
+        TrainingAppDatabase db = TrainingAppDatabase.getInstance(this);
+        mWorkoutExercises.addAll(db.exerciseDao().getAllPreDefinedExercises());
+
 
 /*        WorkoutExercise editedWorkoutExercise = ((WorkoutExercise) selectedWorkoutID.getSerializable(EXERCISE_TO_PASSALONG));
         if (editedWorkoutExercise != null) {

@@ -1,18 +1,37 @@
 package com.example.trainingapp;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Embedded;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
+
+import com.example.trainingapp.TypeConverters.DateConverter;
+import com.example.trainingapp.TypeConverters.ExerciseArrayListConverter;
+import com.example.trainingapp.TypeConverters.ScheduledWeekdaysListConverter;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
+@Entity(tableName = "workouts")
 public class Workout {
+    @PrimaryKey(autoGenerate = true)
     private long id;
+    @ColumnInfo(name = "title")
     private String title = "New Workout";
+    @ColumnInfo(name = "description")
     private String description = "";
+    @ColumnInfo(name = "exercises")
+    @TypeConverters(ExerciseArrayListConverter.class)
     private ArrayList<WorkoutExercise> exercises = new ArrayList<>();
+    @ColumnInfo(name = "last_training_date")
+    @TypeConverters(DateConverter.class)
     private Date lastTraining;
+    @ColumnInfo(name = "scheduled_weekDays")
+    @TypeConverters(ScheduledWeekdaysListConverter.class)
     private ArrayList<WeekDay> scheduledWeekDays = new ArrayList<>();
+    @Embedded(prefix = "rest_timer_")
     private RestTimer workoutRestTimer;
 
     public Workout() {
@@ -62,6 +81,7 @@ public class Workout {
     }
 
     public void addExercise(WorkoutExercise workoutExercise) {
+        workoutExercise.setGeneralRestTimer(workoutRestTimer);
         exercises.add(workoutExercise);
     }
 

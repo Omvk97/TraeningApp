@@ -10,6 +10,10 @@ public class RestTimer {
         this.seconds = seconds;
     }
 
+    public void setTotalMiliseconds(int totalMiliseconds) {
+        this.totalMiliseconds = totalMiliseconds;
+    }
+
     public int getTotalMiliseconds() {
         return totalMiliseconds;
     }
