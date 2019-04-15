@@ -17,8 +17,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.trainingapp.DataRepository;
 import com.example.trainingapp.R;
-import com.example.trainingapp.TrainingAppDatabase;
 import com.example.trainingapp.Workout;
 import com.example.trainingapp.adapters.OnNoteListener;
 import com.example.trainingapp.adapters.WorkoutExerciseAdapter;
@@ -32,7 +32,7 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
     private EditText restTimerminText;
     private EditText restTimersecText;
     private AlertDialog alertDialog;
-    private TrainingAppDatabase db;
+    private DataRepository data;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -59,7 +59,7 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout_view);
 
-        db = TrainingAppDatabase.getInstance(this);
+        data = DataRepository.getInstance(this);
 
         setUp();
         adapter = new WorkoutExerciseAdapter(selectedWorkout.getExercises(), this);
@@ -203,7 +203,7 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
         long selectedWorkoutID = getIntent().getLongExtra(SELECTED_WORKOUT_ID_KEY, -1);
         Log.d(TAG, "setUp: selectedWorkoutID: " + selectedWorkoutID);
         if (selectedWorkoutID != -1) {
-            selectedWorkout = db.workoutDao().getWorkoutById(selectedWorkoutID);
+            selectedWorkout = data.getWorkoutByID(selectedWorkoutID);
             Log.d(TAG, "setUp: selectedWorkout: " + selectedWorkout.toString());
         }
 
@@ -223,7 +223,7 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
 
     @Override
     public void onBackPressed() {
-        db.workoutDao().updateWorkout(selectedWorkout);
+        data.updateWorkout(selectedWorkout);
         Intent mainActivityIntent = new Intent(this, MainActivity.class);
         startActivity(mainActivityIntent);
     }

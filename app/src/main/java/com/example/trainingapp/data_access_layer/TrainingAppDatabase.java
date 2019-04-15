@@ -1,11 +1,14 @@
-package com.example.trainingapp;
+package com.example.trainingapp.data_access_layer;
 
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-@Database(entities = {PreDefinedExercise.class, Workout.class}, version = 2, exportSchema = true)
+import com.example.trainingapp.PreDefinedExercise;
+import com.example.trainingapp.Workout;
+
+@Database(entities = {PreDefinedExercise.class, Workout.class}, version = 2)
 public abstract class TrainingAppDatabase extends RoomDatabase {
 
     private static TrainingAppDatabase INSTANCE = null;

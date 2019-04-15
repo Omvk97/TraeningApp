@@ -13,10 +13,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.example.trainingapp.DatabaseHelper;
+import com.example.trainingapp.DataRepository;
 import com.example.trainingapp.PreDefinedExercise;
 import com.example.trainingapp.R;
-import com.example.trainingapp.TrainingAppDatabase;
 import com.example.trainingapp.Workout;
 import com.example.trainingapp.WorkoutExercise;
 import com.example.trainingapp.adapters.AddExerciseAdapter;
@@ -33,7 +32,7 @@ public class AddExerciseActivity extends AppCompatActivity implements OnNoteList
     private AddExerciseAdapter adapter;
     private Workout selectedWorkout;
     private long selectedWorkoutID;
-    private DatabaseHelper db;
+    private DataRepository data;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -52,10 +51,10 @@ public class AddExerciseActivity extends AppCompatActivity implements OnNoteList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_exercise);
-        db = DatabaseHelper.getInstance(this);
+        data = DataRepository.getInstance(this);
         selectedWorkoutID = getIntent().getLongExtra(WorkoutActivity.SELECTED_WORKOUT_ID_KEY, -1);
         if (selectedWorkoutID != -1) {
-            selectedWorkout = db.getWorkout(selectedWorkoutID);
+            selectedWorkout = data.getWorkoutByID(selectedWorkoutID);
         }
 
         // Change toolbar title to the selected exercise
@@ -74,10 +73,9 @@ public class AddExerciseActivity extends AppCompatActivity implements OnNoteList
 
     }
 
-    public void setUpTestExercises() {
-        TrainingAppDatabase db = TrainingAppDatabase.getInstance(this);
-        mWorkoutExercises.addAll(db.exerciseDao().getAllPreDefinedExercises());
-
+    public synchronized void setUpTestExercises() {
+        data.insertAllPreDefinedExercises(new PreDefinedExercise("Hello there", PreDefinedExercise.MuscleCategory.LOWERBACK, PreDefinedExercise.Category.BODYWEIGHT, "google.com"));
+        mWorkoutExercises.addAll(data.getAllPreDefinedExercises());
 
 /*        WorkoutExercise editedWorkoutExercise = ((WorkoutExercise) selectedWorkoutID.getSerializable(EXERCISE_TO_PASSALONG));
         if (editedWorkoutExercise != null) {

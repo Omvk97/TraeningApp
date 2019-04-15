@@ -1,4 +1,4 @@
-package com.example.trainingapp;
+package com.example.trainingapp.data_access_layer;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.trainingapp.Workout;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;

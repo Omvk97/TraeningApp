@@ -5,8 +5,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 
-import com.example.trainingapp.TypeConverters.EnumConverter;
-import com.example.trainingapp.TypeConverters.SetHistoryConverter;
+import com.example.trainingapp.data_access_layer.TypeConverters.EnumConverter;
+import com.example.trainingapp.data_access_layer.TypeConverters.SetHistoryConverter;
 
 import java.util.ArrayList;
 import java.util.Arrays;

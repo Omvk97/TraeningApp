@@ -14,8 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.Space;
 import android.widget.TextView;
 
+import com.example.trainingapp.DataRepository;
 import com.example.trainingapp.R;
-import com.example.trainingapp.TrainingAppDatabase;
 import com.example.trainingapp.Workout;
 
 import java.util.ArrayList;
@@ -30,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private Context context;
     private Calendar currentDate = Calendar.getInstance();
     private LinearLayout linearLayout;
+    private DataRepository data;
     private boolean noScheduledWorkoutTextAdded = false;
-    private TrainingAppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
         linearLayout = findViewById(R.id.allWorkoutsLinLay);
         currentDate.setTimeZone(TimeZone.getDefault());
         context = this;
-        db = TrainingAppDatabase.getInstance(this);
-        workouts.addAll(db.workoutDao().getAllWorkouts());
+        data = DataRepository.getInstance(context);
+        workouts.addAll(data.getAllWorkouts());
         setAllRoutinesInLinearLayout();
         setScheduledWorkoutCard();
 
@@ -55,11 +55,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void addTrainingRoutine(View v) {
         Workout newWorkout = new Workout();
-        long idOfInsertedWorkout = db.workoutDao().insertWorkout(newWorkout);
-        newWorkout.setId(idOfInsertedWorkout);
-        Intent intent = new Intent(this, WorkoutActivity.class);
-        intent.putExtra(WorkoutActivity.SELECTED_WORKOUT_ID_KEY, idOfInsertedWorkout);
-        startActivity(intent);
+        Long idOfInsertedWorkout = data.insertWorkout(newWorkout);
+        if (idOfInsertedWorkout != null) {
+            newWorkout.setId(idOfInsertedWorkout);
+            Intent intent = new Intent(this, WorkoutActivity.class);
+            intent.putExtra(WorkoutActivity.SELECTED_WORKOUT_ID_KEY, idOfInsertedWorkout);
+            startActivity(intent);
+        }
     }
 
     public void startWorkoutHandler(View startButton) {
@@ -112,22 +114,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View selectedView) {
                 Intent intent = new Intent(getApplicationContext(), WorkoutActivity.class);
-                intent.putExtra(WorkoutActivity.SELECTED_WORKOUT_ID_KEY, workouts.get((Integer) selectedView.getTag()).getId());
+                intent.putExtra(WorkoutActivity.SELECTED_WORKOUT_ID_KEY, Long.valueOf(selectedView.getTag().toString()));
                 startActivity(intent);
             }
         });
         workoutView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(final View selectedView) {
+                final Workout selectedWorkout = data.getWorkoutByID((Long) selectedView.getTag());
                 new AlertDialog.Builder(context)
-                        // TODO - Fix the get tag, because when a workout is deleted above another workout and the workout underneath than is deleted... The index position is all fucked up and the tag is therefore wrong
-                        .setMessage(getString(R.string.deletion, workouts.get((Integer) selectedView.getTag()).getTitle()))
+                        .setMessage(getString(R.string.deletion, selectedWorkout.getTitle()))
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                Workout workoutToBeRemoved = workouts.get(Integer.parseInt(selectedView.getTag().toString()));
-                                db.workoutDao().deleteWorkouts(workoutToBeRemoved);
+                                data.deleteWorkouts(selectedWorkout);
                                 linearLayout.removeView(selectedView);
-                                workouts.remove(workoutToBeRemoved);
+                                workouts.remove(selectedWorkout);
                                 setScheduledWorkoutCard();
                             }
                         })

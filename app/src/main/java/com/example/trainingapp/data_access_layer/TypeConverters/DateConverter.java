@@ -1,4 +1,4 @@
-package com.example.trainingapp.TypeConverters;
+package com.example.trainingapp.data_access_layer.TypeConverters;
 
 import android.arch.persistence.room.TypeConverter;
 

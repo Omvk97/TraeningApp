@@ -1,4 +1,4 @@
-package com.example.trainingapp;
+package com.example.trainingapp.data_access_layer;
 
 public final class DatabaseContract {
     private DatabaseContract() {}

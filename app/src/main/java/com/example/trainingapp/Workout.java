@@ -7,9 +7,9 @@ import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
-import com.example.trainingapp.TypeConverters.DateConverter;
-import com.example.trainingapp.TypeConverters.ExerciseArrayListConverter;
-import com.example.trainingapp.TypeConverters.ScheduledWeekdaysListConverter;
+import com.example.trainingapp.data_access_layer.TypeConverters.DateConverter;
+import com.example.trainingapp.data_access_layer.TypeConverters.ExerciseArrayListConverter;
+import com.example.trainingapp.data_access_layer.TypeConverters.ScheduledWeekdaysListConverter;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
