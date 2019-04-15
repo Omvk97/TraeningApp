@@ -18,7 +18,6 @@ public abstract class TrainingAppDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                     TrainingAppDatabase.class, "training_app.db")
-                    .allowMainThreadQueries() // TODO - FIX THIS
                     .fallbackToDestructiveMigration()
                     .build();
         }
