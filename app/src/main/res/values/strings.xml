@@ -12,7 +12,7 @@
     <string name="startWorkoutBtn">START WORKOUT</string>
     <string name="toolbar_workout_routines">Your Workouts </string>
     <string name="content_main_workout_routines">All Workouts</string>
-    <string name="deletion">Are you sure you want to delete %1$s?</string>
+    <string name="deletion_confirmation">Are you sure you want to delete %1$s?</string>
     <string name="yes">YES</string>
     <string name="cancel">CANCEL</string>
     <string name="close">CLOSE</string>
@@ -38,4 +38,5 @@
     <string name="upload_image">Upload Image</string>
     <string name="add_note">Add Note</string>
     <string name="workout_name_hint_txtView">Workout Name:</string>
+    <string name="deletion">%1$s has been deleted!</string>
 </resources>

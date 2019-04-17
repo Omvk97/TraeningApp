@@ -1,5 +1,7 @@
 package com.example.trainingapp.activities;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,13 +31,37 @@ import java.util.List;
 public class AddExerciseActivity extends AppCompatActivity implements OnNoteListener {
     private static final String TAG = "AddExerciseActivity";
     private List<PreDefinedExercise> preDefinedExercises = new ArrayList<>();
-    private AddExerciseAdapter adapter;
+    private AddExerciseAdapter mAdapter;
     private Workout selectedWorkout;
     private DataRepository data;
+    private SearchView mSearchView;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.add_exercise_menu, menu);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        mSearchView = (SearchView) menu.findItem(R.id.exerciseSearch)
+                .getActionView();
+        mSearchView.setSearchableInfo(searchManager
+                .getSearchableInfo(getComponentName()));
+        mSearchView.setMaxWidth(Integer.MAX_VALUE);
+
+        // listening to search query text change
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // filter recycler view when query submitted
+                mAdapter.getFilter().filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                // filter recycler view when text is changed
+                mAdapter.getFilter().filter(query);
+                return false;
+            }
+        });
         return true;
     }
 
@@ -42,6 +69,9 @@ public class AddExerciseActivity extends AppCompatActivity implements OnNoteList
     public boolean onOptionsItemSelected(MenuItem item) {
         // TODO - Search after specific exercise
         //TODO - Filter popup with exercise muscle category + exercise Equipment
+        if (item.getItemId() == R.id.exerciseSearch) {
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -66,8 +96,8 @@ public class AddExerciseActivity extends AppCompatActivity implements OnNoteList
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         exerciseRV.setLayoutManager(linearLayoutManager);
 
-        adapter = new AddExerciseAdapter(preDefinedExercises, this);
-        exerciseRV.setAdapter(adapter);
+        mAdapter = new AddExerciseAdapter(preDefinedExercises, this);
+        exerciseRV.setAdapter(mAdapter);
     }
 
     private void setupToolbar() {
@@ -115,12 +145,12 @@ public class AddExerciseActivity extends AppCompatActivity implements OnNoteList
     @Override
     public void onLongNoteClick(final int position) {
         new AlertDialog.Builder(this)
-                .setMessage(getString(R.string.deletion, preDefinedExercises.get(position).getExerciseName()))
+                .setMessage(getString(R.string.deletion_confirmation, preDefinedExercises.get(position).getExerciseName()))
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         data.deleteExercise(preDefinedExercises.get(position));
                         preDefinedExercises.remove(preDefinedExercises.get(position));
-                        adapter.notifyDataSetChanged();
+                        mAdapter.notifyDataSetChanged();
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

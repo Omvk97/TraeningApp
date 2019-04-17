@@ -2,15 +2,14 @@ package com.example.trainingapp.activities;
 
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -19,9 +18,10 @@ import android.widget.TextView;
 import com.example.trainingapp.DataRepository;
 import com.example.trainingapp.PreDefinedExerciseInsertionAsyncTask;
 import com.example.trainingapp.R;
+import com.example.trainingapp.SwipeToDeleteCallBack;
 import com.example.trainingapp.Workout;
 import com.example.trainingapp.adapters.OnNoteListener;
-import com.example.trainingapp.adapters.WorkoutRoutinesOverviewAdapter;
+import com.example.trainingapp.adapters.WorkoutOverviewAdapter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -30,12 +30,12 @@ import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity implements OnNoteListener {
     private static final String FIRST_TIME_USE = "first time";
-    private List<Workout> workouts = new ArrayList<>();
-    private Context context;
-    private DataRepository data;
-    private RecyclerView workoutRV;
-    private WorkoutRoutinesOverviewAdapter adapter;
-    private boolean noScheduledWorkoutTextAdded = false;
+    private List<Workout> mWorkouts = new ArrayList<>();
+    private Context mContext;
+    private DataRepository mDatabase;
+    private RecyclerView mWorkoutRV;
+    private WorkoutOverviewAdapter mAdapter;
+    private boolean mNoScheduledWorkoutTextAdded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,21 +47,21 @@ public class MainActivity extends AppCompatActivity implements OnNoteListener {
             sharedPreferences.edit().putBoolean(FIRST_TIME_USE, false).apply();
         }
 
-        context = this;
-        data = DataRepository.getInstance(context);
-        workouts.addAll(data.getAllWorkouts());
+        mContext = this;
+        mDatabase = DataRepository.getInstance(mContext);
+        mWorkouts.addAll(mDatabase.getAllWorkouts());
         setScheduledWorkoutCard();
         setupRecyclerView();
     }
 
     private void setupRecyclerView() {
-        workoutRV = findViewById(R.id.workoutRV);
-        workoutRV.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        workoutRV.setLayoutManager(linearLayoutManager);
-        adapter = new WorkoutRoutinesOverviewAdapter(workouts, this);
-        workoutRV.setAdapter(adapter);
+        mWorkoutRV = findViewById(R.id.workoutRV);
+        mWorkoutRV.setHasFixedSize(true);
+        mWorkoutRV.setLayoutManager(new LinearLayoutManager(this));
+        mAdapter = new WorkoutOverviewAdapter(mWorkouts, this);
+        mWorkoutRV.setAdapter(mAdapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallBack(mAdapter));
+        itemTouchHelper.attachToRecyclerView(mWorkoutRV);
     }
 
     private void setScheduledWorkoutCard() {
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnNoteListener {
         boolean scheduledWorkoutToday = false;
         // The scheduled workout should be added at the index where allWorkouts textview is and thereby moving allworkouts textview one down
         int allWorkoutsTextIndex = linearLayout.indexOfChild(findViewById(R.id.allWorkoutsTxt));
-        for (Workout workout : workouts) {
+        for (Workout workout : mWorkouts) {
             for (Workout.WeekDay scheduledDay : workout.getScheduledWeekDays()) {
                 if (currentDate.get(Calendar.DAY_OF_WEEK) == scheduledDay.getWeekdayValue()) {
                     View scheduledWorkout = inflateWorkoutView(workout);
@@ -80,11 +80,11 @@ public class MainActivity extends AppCompatActivity implements OnNoteListener {
                 }
             }
         }
-        if (!scheduledWorkoutToday && !noScheduledWorkoutTextAdded) {
-            TextView noScheduledWorkout = new TextView(context);
+        if (!scheduledWorkoutToday && !mNoScheduledWorkoutTextAdded) {
+            TextView noScheduledWorkout = new TextView(mContext);
             noScheduledWorkout.setText(R.string.no_scheduled_workout);
             linearLayout.addView(noScheduledWorkout, allWorkoutsTextIndex++);
-            noScheduledWorkoutTextAdded = true;
+            mNoScheduledWorkoutTextAdded = true;
         }
     }
 
@@ -102,13 +102,13 @@ public class MainActivity extends AppCompatActivity implements OnNoteListener {
         workoutView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onNoteClick(workouts.indexOf(workout));
+                onNoteClick(mWorkouts.indexOf(workout));
             }
         });
         workoutView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                onLongNoteClick(workouts.indexOf(workout));
+                onLongNoteClick(mWorkouts.indexOf(workout));
                 return true;
             }
         });
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements OnNoteListener {
 
     public void addTrainingRoutine(View v) {
         Workout newWorkout = new Workout();
-        Long idOfInsertedWorkout = data.insertWorkout(newWorkout);
+        Long idOfInsertedWorkout = mDatabase.insertWorkout(newWorkout);
         if (idOfInsertedWorkout != null) {
             newWorkout.setId(idOfInsertedWorkout);
             Intent intent = new Intent(this, WorkoutActivity.class);
@@ -128,35 +128,20 @@ public class MainActivity extends AppCompatActivity implements OnNoteListener {
 
     public void startWorkout(View view) {
 /*        Intent startWorkoutIntent = new Intent(this, StartWorkoutActivity.class);
-        startWorkoutIntent.putExtra(STARTED_WORKOUT_KEY, workouts.get((Integer) view.getTag()));
+        startWorkoutIntent.putExtra(STARTED_WORKOUT_KEY, mWorkouts.get((Integer) view.getTag()));
         startActivity(startWorkoutIntent);*/
     }
 
     @Override
     public void onNoteClick(int position) {
         Intent intent = new Intent(getApplicationContext(), WorkoutActivity.class);
-        UserInteractions.getInstance().setSelectedWorkoutID(workouts.get(position).getId());
+        UserInteractions.getInstance().setSelectedWorkoutID(mWorkouts.get(position).getId());
         startActivity(intent);
     }
 
     @Override
     public void onLongNoteClick(int position) {
-        final Workout selectedWorkout = workouts.get(position);
-        new AlertDialog.Builder(context)
-                .setMessage(getString(R.string.deletion, selectedWorkout.getTitle()))
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        data.deleteWorkouts(selectedWorkout);
-                        workouts.remove(selectedWorkout);
-                        adapter.notifyDataSetChanged();
-                        setScheduledWorkoutCard();
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // Do nothing
-                    }
-                }).create().show();
+        // TODO - Maybe make Editworkoutsproperties to a fragment and go to it with the selected workout without disturbing the flow of UserInteractions selectedWorkout, for WorkoutActivity
     }
 }
 

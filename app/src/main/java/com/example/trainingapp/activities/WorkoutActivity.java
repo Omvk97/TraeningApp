@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +18,7 @@ import android.widget.EditText;
 
 import com.example.trainingapp.DataRepository;
 import com.example.trainingapp.R;
+import com.example.trainingapp.SwipeToDeleteCallBack;
 import com.example.trainingapp.Workout;
 import com.example.trainingapp.WorkoutExercise;
 import com.example.trainingapp.adapters.OnNoteListener;
@@ -24,12 +26,11 @@ import com.example.trainingapp.adapters.WorkoutExerciseAdapter;
 
 public class WorkoutActivity extends AppCompatActivity implements OnNoteListener {
     private static final String TAG = "WorkoutActivity";
-    private Workout selectedWorkout = null;
-    private RecyclerView exerciseRV;
-    private WorkoutExerciseAdapter adapter;
-    private EditText restTimerminText;
-    private EditText restTimersecText;
-    private DataRepository data;
+    private Workout mSelectedWorkout = null;
+    private WorkoutExerciseAdapter mAdapter;
+    private EditText mRestTimerMinText;
+    private EditText mRestTimerSectext;
+    private DataRepository mDatabase;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -54,24 +55,16 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout_view);
-        data = DataRepository.getInstance(this);
+        mDatabase = DataRepository.getInstance(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        selectedWorkout = data.getWorkoutByID(UserInteractions.getInstance().getSelectedWorkoutID());
-        exerciseRV = findViewById(R.id.routine_details_RV);
-        exerciseRV.setHasFixedSize(true);
-        exerciseRV.setNestedScrollingEnabled(false);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        exerciseRV.setLayoutManager(linearLayoutManager);
-        adapter = new WorkoutExerciseAdapter(this, R.layout.exercise_set_test_view, selectedWorkout.getExercises(), this);
-        exerciseRV.setAdapter(adapter);
+        setupRecyclerView();
 
         Toolbar toolbar = findViewById(R.id.routineDetailsToolbar);
-        toolbar.setTitle(selectedWorkout.getTitle());
+        toolbar.setTitle(mSelectedWorkout.getTitle());
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,25 +76,37 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
+    private void setupRecyclerView() {
+        RecyclerView exerciseRV = findViewById(R.id.routine_details_RV);
+        mSelectedWorkout = mDatabase.getWorkoutByID(UserInteractions.getInstance().getSelectedWorkoutID());
+        exerciseRV.setHasFixedSize(true);
+        exerciseRV.setNestedScrollingEnabled(false);
+        exerciseRV.setLayoutManager(new LinearLayoutManager(this));
+        mAdapter = new WorkoutExerciseAdapter(mSelectedWorkout.getExercises(), this);
+        exerciseRV.setAdapter(mAdapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallBack(mAdapter));
+        itemTouchHelper.attachToRecyclerView(exerciseRV);
+    }
+
     private void createWorkoutTimerDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_rest_timer, null);
-        restTimerminText = dialogView.findViewById(R.id.restTimerMinTxt);
-        restTimersecText = dialogView.findViewById(R.id.restTimerSecTxt);
-        updateMinTimerText(selectedWorkout.getWorkoutRestTimer().getMinutes());
-        updateSecTimerText(selectedWorkout.getWorkoutRestTimer().getSeconds());
+        mRestTimerMinText = dialogView.findViewById(R.id.restTimerMinTxt);
+        mRestTimerSectext = dialogView.findViewById(R.id.restTimerSecTxt);
+        updateMinTimerText(mSelectedWorkout.getWorkoutRestTimer().getMinutes());
+        updateSecTimerText(mSelectedWorkout.getWorkoutRestTimer().getSeconds());
         dialogBuilder.setView(dialogView);
         dialogBuilder.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                int minValue = Integer.valueOf(restTimerminText.getText().toString());
-                int secValue = Integer.valueOf(restTimersecText.getText().toString());
-                selectedWorkout.setGeneralRestTimer(minValue, secValue);
-                for (WorkoutExercise exercise : selectedWorkout.getExercises()) {
-                    exercise.setGeneralRestTimer(selectedWorkout);
+                int minValue = Integer.valueOf(mRestTimerMinText.getText().toString());
+                int secValue = Integer.valueOf(mRestTimerSectext.getText().toString());
+                mSelectedWorkout.setGeneralRestTimer(minValue, secValue);
+                for (WorkoutExercise exercise : mSelectedWorkout.getExercises()) {
+                    exercise.setGeneralRestTimer(mSelectedWorkout);
                 }
-                adapter.notifyDataSetChanged();
+                mAdapter.notifyDataSetChanged();
                 dialog.dismiss();
             }
         }).create().show();
@@ -110,8 +115,8 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
     public void restTimerPlusClick(View v) {
         final int MINUTES_TO_BE_ADDED_INTERVAL = 1;
         final int SECONDS_TO_BE_ADDED_INTERVAL = 15;
-        int initialMinuteSet = Integer.parseInt(restTimerminText.getText().toString());
-        int initialSecondsSet = Integer.parseInt(restTimersecText.getText().toString());
+        int initialMinuteSet = Integer.parseInt(mRestTimerMinText.getText().toString());
+        int initialSecondsSet = Integer.parseInt(mRestTimerSectext.getText().toString());
         switch (v.getTag().toString()) {
             case "min":
                 updateMinTimerText(initialMinuteSet + MINUTES_TO_BE_ADDED_INTERVAL);
@@ -119,7 +124,7 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
             case "sec":
                 if (initialSecondsSet + SECONDS_TO_BE_ADDED_INTERVAL >= 60) {
                     updateMinTimerText(initialMinuteSet + 1);
-                    restTimersecText.setText("0"); // After a minute has been added seconds is set to 0
+                    mRestTimerSectext.setText("0"); // After a minute has been added seconds is set to 0
                 } else {
                     int numOfSecondsUpToInterval = SECONDS_TO_BE_ADDED_INTERVAL - (initialSecondsSet % SECONDS_TO_BE_ADDED_INTERVAL);
                     if (numOfSecondsUpToInterval == 0) {
@@ -135,8 +140,8 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
     public void restTimerMinusClick(View v) {
         final int MINUTES_TO_BE_REMOVED_INTERVAL = -1;
         final int SECONDS_TO_BE_REMOVED_INTERVAL = -15;
-        int initialMinuteSet = Integer.parseInt(restTimerminText.getText().toString());
-        int initialSecondsSet = Integer.parseInt(restTimersecText.getText().toString());
+        int initialMinuteSet = Integer.parseInt(mRestTimerMinText.getText().toString());
+        int initialSecondsSet = Integer.parseInt(mRestTimerSectext.getText().toString());
         switch (v.getTag().toString()) {
             case "min":
                 if (initialMinuteSet + MINUTES_TO_BE_REMOVED_INTERVAL <= 0) {
@@ -161,11 +166,11 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
     }
 
     private void updateMinTimerText(int minute) {
-        restTimerminText.setText(Integer.toString(minute));
+        mRestTimerMinText.setText(Integer.toString(minute));
     }
 
     private void updateSecTimerText(int seconds) {
-        restTimersecText.setText(Integer.toString(seconds));
+        mRestTimerSectext.setText(Integer.toString(seconds));
     }
 
     public void addExercise(View v) {
@@ -174,28 +179,28 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
     }
 
     public void addSetHandler(View view) {
-        WorkoutExercise workoutExercise = selectedWorkout.getExercises().get(Integer.valueOf(view.getTag().toString()));
+        WorkoutExercise workoutExercise = mSelectedWorkout.getExercises().get(Integer.valueOf(view.getTag().toString()));
         workoutExercise.addSet();
-        adapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
     }
 
     public void adjustExerciseRestTimer(View view) {
-        final WorkoutExercise workoutExercise = selectedWorkout.getExercises().get(Integer.valueOf(view.getTag().toString()));
+        final WorkoutExercise workoutExercise = mSelectedWorkout.getExercises().get(Integer.valueOf(view.getTag().toString()));
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_rest_timer, null);
-        restTimerminText = dialogView.findViewById(R.id.restTimerMinTxt);
-        restTimersecText = dialogView.findViewById(R.id.restTimerSecTxt);
+        mRestTimerMinText = dialogView.findViewById(R.id.restTimerMinTxt);
+        mRestTimerSectext = dialogView.findViewById(R.id.restTimerSecTxt);
         updateMinTimerText(workoutExercise.getRestTimer().getMinutes());
         updateSecTimerText(workoutExercise.getRestTimer().getSeconds());
         dialogBuilder.setView(dialogView);
         dialogBuilder.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                int minValue = Integer.valueOf(restTimerminText.getText().toString());
-                int secValue = Integer.valueOf(restTimersecText.getText().toString());
+                int minValue = Integer.valueOf(mRestTimerMinText.getText().toString());
+                int secValue = Integer.valueOf(mRestTimerSectext.getText().toString());
                 workoutExercise.setSpecificRestTimer(minValue, secValue);
-                adapter.notifyDataSetChanged();
+                mAdapter.notifyDataSetChanged();
                 dialog.dismiss();
             }
         }).create().show();
@@ -204,7 +209,7 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
     @Override
     public void onNoteClick(int position) {
         Intent editExerciseIntent = new Intent(this, EditExerciseActivity.class);
-        long idOfSelectedExercise = selectedWorkout.getExercises().get(position).getId();
+        long idOfSelectedExercise = mSelectedWorkout.getExercises().get(position).getId();
         UserInteractions.getInstance().setSelectedExerciseID(idOfSelectedExercise);
         startActivity(editExerciseIntent);
     }
@@ -212,11 +217,11 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
     @Override
     public void onLongNoteClick(final int position) {
         new AlertDialog.Builder(this)
-                .setMessage(getString(R.string.deletion, selectedWorkout.getExercises().get(position).getExerciseName()))
+                .setMessage(getString(R.string.deletion_confirmation, mSelectedWorkout.getExercises().get(position).getExerciseName()))
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        selectedWorkout.getExercises().remove(selectedWorkout.getExercises().get(position));
-                        adapter.notifyDataSetChanged();
+                        mSelectedWorkout.getExercises().remove(mSelectedWorkout.getExercises().get(position));
+                        mAdapter.notifyDataSetChanged();
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -236,7 +241,7 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
     @Override
     protected void onPause() {
         super.onPause();
-        data.updateWorkout(selectedWorkout);
+        mDatabase.updateWorkout(mSelectedWorkout);
     }
 
 
