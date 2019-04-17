@@ -1,51 +1,40 @@
 package com.example.trainingapp.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.example.trainingapp.DataRepository;
 import com.example.trainingapp.R;
 import com.example.trainingapp.Workout;
 
-public class EditWorkoutActivity extends AppCompatActivity {
-    private static final String TAG = "EditWorkoutActivity";
+public class EditWorkoutPropertiesActivity extends AppCompatActivity {
+    private static final String TAG = "EditWorkoutProperties";
     private Workout selectedWorkout;
     private TextView workoutName;
-    private ToggleButton monday;
-    private ToggleButton tuesday;
-    private ToggleButton wednesday;
-    private ToggleButton thursday;
-    private ToggleButton friday;
-    private ToggleButton saturday;
-    private ToggleButton sunday;
     private TextView description;
+    private DataRepository data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // TODO - Save what user has written on pause and set it back on resume
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_workout);
-
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            selectedWorkout = (Workout) extras.getSerializable(WorkoutActivity.SELECTED_WORKOUT_ID_KEY);
-        }
+        data = DataRepository.getInstance(this);
+        selectedWorkout = data.getWorkoutByID(UserInteractions.getInstance().getSelectedWorkoutID());
         initialiseFields();
         setUpToolbar();
     }
 
     private void initialiseFields() {
         workoutName = findViewById(R.id.workoutNameTxt);
-        monday = findViewById(R.id.toggleMonday);
-        tuesday = findViewById(R.id.toggleTuesday);
-        wednesday = findViewById(R.id.toggleWednesday);
-        thursday = findViewById(R.id.toggleThursday);
-        friday = findViewById(R.id.toggleFriday);
-        saturday = findViewById(R.id.toggleSaturday);
-        sunday = findViewById(R.id.toggleSunday);
+        LinearLayout toggleButtons = findViewById(R.id.toggleButtonsLayout);
         description = findViewById(R.id.workoutDescriptionTxt);
 
         workoutName.setText(selectedWorkout.getTitle());
@@ -53,25 +42,25 @@ public class EditWorkoutActivity extends AppCompatActivity {
             for (Workout.WeekDay weekday : selectedWorkout.getScheduledWeekDays()) {
                 switch (weekday.toString().toLowerCase().trim()) {
                     case "monday":
-                        monday.toggle();
+                        ((ToggleButton)toggleButtons.getChildAt(0)).toggle();
                         break;
                     case "tuesday":
-                        tuesday.toggle();
+                        ((ToggleButton)toggleButtons.getChildAt(1)).toggle();
                         break;
                     case "wednesday":
-                        wednesday.toggle();
+                        ((ToggleButton)toggleButtons.getChildAt(2)).toggle();
                         break;
                     case "thursday":
-                        thursday.toggle();
+                        ((ToggleButton)toggleButtons.getChildAt(3)).toggle();
                         break;
                     case "friday":
-                        friday.toggle();
+                        ((ToggleButton)toggleButtons.getChildAt(4)).toggle();
                         break;
                     case "saturday":
-                        saturday.toggle();
+                        ((ToggleButton)toggleButtons.getChildAt(5)).toggle();
                         break;
                     case "sunday":
-                        sunday.toggle();
+                        ((ToggleButton)toggleButtons.getChildAt(6)).toggle();
                         break;
                 }
             }
@@ -84,6 +73,13 @@ public class EditWorkoutActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
     }
 
     public void exerciseWorkoutDayHandler(View clickedView) {
@@ -101,11 +97,11 @@ public class EditWorkoutActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // TODO - ADD THIS TO HOME BUTTON IN TOOLBAR
-/*        selectedWorkout.setTitle(workoutName.getText().toString());
+        // TODO - Add "error" fields if something wrong has been inserted. Textfields has an error attribute
+        selectedWorkout.setTitle(workoutName.getText().toString());
         selectedWorkout.setDescription(description.getText().toString());
+        data.updateWorkout(selectedWorkout);
         Intent goBackToWorkoutView = new Intent(this, WorkoutActivity.class);
-        goBackToWorkoutView.putExtra(WorkoutActivity.SELECTED_WORKOUT_ID_KEY, selectedWorkout);
-        startActivity(goBackToWorkoutView);*/
+        startActivity(goBackToWorkoutView);
     }
 }
