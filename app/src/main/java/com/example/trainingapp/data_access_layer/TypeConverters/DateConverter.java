@@ -5,7 +5,6 @@ import android.arch.persistence.room.TypeConverter;
 import java.util.Date;
 
 public class DateConverter {
-
     @TypeConverter
     public static Date getDate(long miliseconds) {
         return new Date(miliseconds);

@@ -27,19 +27,29 @@ public class PreDefinedExercise {
     @TypeConverters(EnumConverter.class)
     private Category category;
     @ColumnInfo(name = "picture_url")
-    private String pictureURL;
+    private String pictureUriString;
     @ColumnInfo(name = "name")
     private String exerciseName;
+    @ColumnInfo(name = "customExercise")
+    private boolean customExercise = false;
 
     public PreDefinedExercise(String exerciseName) {
         this.exerciseName = exerciseName;
     }
 
-    public PreDefinedExercise(String exerciseName, MuscleCategory muscleCategory, Category category, String pictureURL) {
+    public PreDefinedExercise(String exerciseName, MuscleCategory muscleCategory, Category category, String pictureUriString) {
         this(exerciseName);
         this.exerciseMuscleCategory = muscleCategory;
         this.category = category;
-        this.pictureURL = pictureURL;
+        this.pictureUriString = pictureUriString;
+    }
+
+    public boolean isCustomExercise() {
+        return customExercise;
+    }
+
+    public void setCustomExercise(boolean customExercise) {
+        this.customExercise = customExercise;
     }
 
     public HashMap<Date, ArrayList<ExerciseSet>> getSethistory() {
@@ -75,12 +85,12 @@ public class PreDefinedExercise {
         return "50 X 22";
     }
 
-    public String getPictureURL() {
-        return pictureURL;
+    public String getPictureUriString() {
+        return pictureUriString;
     }
 
-    public void setPictureURL(String pictureURL) {
-        this.pictureURL = pictureURL;
+    public void setPictureUriString(String pictureUriString) {
+        this.pictureUriString = pictureUriString;
     }
 
     public String getExerciseName() {
@@ -121,10 +131,6 @@ public class PreDefinedExercise {
             this.stringRepresentation = stringRepresentation;
         }
 
-        public String getStringRepresentation() {
-            return stringRepresentation;
-        }
-
         public static MuscleCategory getMuscleCategory(String stringRepresentation) {
             for (MuscleCategory muscleCategory : values()) {
                 if (stringRepresentation.equalsIgnoreCase(muscleCategory.getStringRepresentation())) {
@@ -133,20 +139,21 @@ public class PreDefinedExercise {
             }
             return null;
         }
+
+        public String getStringRepresentation() {
+            return stringRepresentation;
+        }
     }
 
     public enum Category {
         BARBELL("Barbell"), DUMBBELL("Dumbbell"), SMITHMACHINE("Smith-Machine"), MACHINE("Machine"),
-        OTHER("Other"), BODYWEIGHT("Bodyweight"), ASSISTEDBODY("Assisted-Body"), TIME("Time"), EZBAR("Ez-Bar");
+        OTHER("Other"), BODYWEIGHT("Bodyweight"), ASSISTEDBODY("Assisted-Body"), TIME("Time"), EZBAR("Ez-Bar"),
+        RACK("Rack");
 
         private final String stringRepresentation;
 
         Category(String stringRepresentation) {
             this.stringRepresentation = stringRepresentation;
-        }
-
-        public String getStringRepresentation() {
-            return stringRepresentation;
         }
 
         public static Category getCategory(String stringRepresentation) {
@@ -156,6 +163,10 @@ public class PreDefinedExercise {
                 }
             }
             return null;
+        }
+
+        public String getStringRepresentation() {
+            return stringRepresentation;
         }
     }
 }

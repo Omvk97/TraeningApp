@@ -13,15 +13,14 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/workoutExerciseImage"
             android:layout_width="72dp"
             android:layout_height="0dp"
             android:layout_marginBottom="8dp"
-            android:adjustViewBounds="true"
-            android:scaleType="fitEnd"
+            android:scaleType="fitCenter"
             app:layout_constraintBottom_toBottomOf="@+id/adjustRestTimerBtn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -68,6 +67,7 @@
             android:layout_height="43dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:onClick="adjustExerciseRestTimer"
             android:text="@string/textview_adjust_timer"
             android:textAlignment="center"
             app:layout_constraintBottom_toBottomOf="@+id/restBetweenSetsTxt"
@@ -81,67 +81,25 @@
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:minHeight="40dp"
+            android:onClick="addSetHandler"
             android:text="@string/button_add_set"
-            app:layout_constraintEnd_toEndOf="@+id/exerciseSetsRV"
+            app:layout_constraintEnd_toEndOf="@+id/setsListView"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="@+id/exerciseSetsRV"
-            app:layout_constraintTop_toBottomOf="@+id/exerciseSetsRV" />
+            app:layout_constraintStart_toStartOf="@+id/setsListView"
+            app:layout_constraintTop_toBottomOf="@+id/setsListView" />
 
-        <TableLayout
-            android:id="@+id/exerciseSetsRV"
+        <com.example.trainingapp.CustomListView
+            android:id="@+id/setsListView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:scrollbars="none"
+            app:layout_constraintEnd_toEndOf="@+id/workoutExerciseImage"
             app:layout_constraintStart_toStartOf="@+id/imageView3"
-            app:layout_constraintTop_toBottomOf="@+id/adjustRestTimerBtn">
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:id="@+id/textView7"
-                    android:layout_width="@dimen/set_column_width"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/textview_set_set"
-                    android:textAlignment="center"
-                    android:textStyle="bold"
-                    tools:layout_editor_absoluteX="40dp"
-                    tools:layout_editor_absoluteY="90dp" />
-
-                <TextView
-                    android:id="@+id/textView8"
-                    android:layout_width="@dimen/set_overview_column_width"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text="@string/textview_set_best"
-                    android:textAlignment="center"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/textView9"
-                    android:layout_width="@dimen/set_overview_column_width"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text="@string/textview_set_kg"
-                    android:textAlignment="center"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/textView10"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text="@string/textview_set_reps"
-                    android:textAlignment="center"
-                    android:textStyle="bold" />
-            </TableRow>
-
-        </TableLayout>
+            app:layout_constraintTop_toBottomOf="@+id/adjustRestTimerBtn" />
 
     </android.support.constraint.ConstraintLayout>
 

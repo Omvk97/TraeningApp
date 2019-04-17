@@ -11,15 +11,16 @@ import android.widget.TextView;
 
 import com.example.trainingapp.PreDefinedExercise;
 import com.example.trainingapp.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class AddExerciseAdapter extends RecyclerView.Adapter<AddExerciseAdapter.ExerciseViewHolder> {
-    private List<PreDefinedExercise> mWorkoutExercises;
+    private List<PreDefinedExercise> preDefinedExercises;
     private OnNoteListener onNoteListener;
 
     public AddExerciseAdapter(List<PreDefinedExercise> workoutExercises, OnNoteListener onNoteListener) {
-        this.mWorkoutExercises = workoutExercises;
+        this.preDefinedExercises = workoutExercises;
         this.onNoteListener = onNoteListener;
     }
 
@@ -31,14 +32,18 @@ public class AddExerciseAdapter extends RecyclerView.Adapter<AddExerciseAdapter.
 
     @Override
     public void onBindViewHolder(ExerciseViewHolder exerciseViewHolder, int i) {
-        exerciseViewHolder.exerciseName.setText(mWorkoutExercises.get(i).getExerciseName());
-        exerciseViewHolder.exerciseImage.setBackgroundResource(R.drawable.image_timer);
+        exerciseViewHolder.exerciseName.setText(preDefinedExercises.get(i).getExerciseName());
         exerciseViewHolder.editImageButton.setTag(i); // Tag to get position in array
+
+        Picasso.get().load(preDefinedExercises.get(i).getPictureUriString())
+                .placeholder(R.drawable.image_placeholder)
+                .error(R.drawable.error)
+                .into(exerciseViewHolder.exerciseImage);
     }
 
     @Override
     public int getItemCount() {
-        return mWorkoutExercises.size();
+        return preDefinedExercises.size();
     }
 
     @Override

@@ -5,13 +5,13 @@ import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
-import android.content.Context;
 
 import com.example.trainingapp.data_access_layer.TypeConverters.DateConverter;
 import com.example.trainingapp.data_access_layer.TypeConverters.ExerciseArrayListConverter;
 import com.example.trainingapp.data_access_layer.TypeConverters.ScheduledWeekdaysListConverter;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 @Entity(tableName = "workouts")
@@ -64,14 +64,6 @@ public class Workout {
         this.lastTraining = lastTraining;
     }
 
-    public void setScheduledWeekDays(ArrayList<WeekDay> scheduledWeekDays) {
-        this.scheduledWeekDays = scheduledWeekDays;
-    }
-
-    public void setWorkoutRestTimer(RestTimer workoutRestTimer) {
-        this.workoutRestTimer = workoutRestTimer;
-    }
-
     public ArrayList<WorkoutExercise> getExercises() {
         return exercises;
     }
@@ -81,7 +73,7 @@ public class Workout {
     }
 
     public void addExercise(WorkoutExercise workoutExercise) {
-        workoutExercise.setGeneralRestTimer(workoutRestTimer);
+        workoutExercise.setGeneralRestTimer(this);
         exercises.add(workoutExercise);
     }
 
@@ -89,9 +81,10 @@ public class Workout {
         exercises.remove(workoutExercise);
     }
 
-    public String getLastTraining(Context applicationContext) {
-        DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(applicationContext);
-        return dateFormat.format(lastTraining);
+    public String getLastTrainingString() {
+        DateFormat formatter = SimpleDateFormat.getDateInstance();
+        String dateString = formatter.format(lastTraining);
+        return dateString;
     }
 
     public void setLastTraining() {
@@ -116,6 +109,10 @@ public class Workout {
 
     public ArrayList<WeekDay> getScheduledWeekDays() {
         return scheduledWeekDays;
+    }
+
+    public void setScheduledWeekDays(ArrayList<WeekDay> scheduledWeekDays) {
+        this.scheduledWeekDays = scheduledWeekDays;
     }
 
     public String getScheduledWeekDaysString() {
@@ -150,9 +147,24 @@ public class Workout {
         return workoutRestTimer;
     }
 
+    public void setWorkoutRestTimer(RestTimer workoutRestTimer) {
+        this.workoutRestTimer = workoutRestTimer;
+    }
+
     public void setGeneralRestTimer(int minutes, int seconds) {
         workoutRestTimer.setMinutes(minutes);
         workoutRestTimer.setSeconds(seconds);
+    }
+
+    @Override
+    public String toString() {
+        return "Workout{" +
+                ", exercises=" + exercises +
+                ", lastTraining=" + lastTraining +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", scheduledWeekDays=" + scheduledWeekDays +
+                '}';
     }
 
     public enum WeekDay {
@@ -167,16 +179,5 @@ public class Workout {
         public int getWeekdayValue() {
             return weekdayValue;
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Workout{" +
-                ", exercises=" + exercises +
-                ", lastTraining=" + lastTraining +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", scheduledWeekDays=" + scheduledWeekDays +
-                '}';
     }
 }

@@ -1,7 +1,6 @@
 package com.example.trainingapp.data_access_layer.TypeConverters;
 
 import android.arch.persistence.room.TypeConverter;
-import android.util.Log;
 
 import com.example.trainingapp.WorkoutExercise;
 import com.google.gson.Gson;
@@ -20,14 +19,12 @@ public class ExerciseArrayListConverter {
             return new ArrayList<>();
         } else {
             Type arrayListType = new TypeToken<ArrayList<WorkoutExercise>>() {}.getType();
-            Log.d(TAG, "stringToArrayList: " + gson.fromJson(dataJson, arrayListType).toString());
             return gson.fromJson(dataJson, arrayListType);
         }
     }
 
     @TypeConverter
     public static String arrayListToString(ArrayList<WorkoutExercise> exercises) {
-        Log.d(TAG, "arrayListToString: " + gson.toJson(exercises));
         return gson.toJson(exercises);
     }
 

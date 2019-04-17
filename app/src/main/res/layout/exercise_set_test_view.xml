@@ -1,35 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/setNumberTxt"
+        android:id="@+id/setNumberTestTxt"
         android:layout_width="@dimen/set_column_width"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:freezesText="true"
-        android:isScrollContainer="false"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/setBestHistoryTxt"
+        android:id="@+id/setBestTestTxt"
         android:layout_width="@dimen/set_overview_column_width"
         android:layout_height="wrap_content"
         android:layout_weight="2"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/setWeightTxt"
+        android:id="@+id/setWeightTestTxt"
         android:layout_width="@dimen/set_overview_column_width"
         android:layout_height="wrap_content"
         android:layout_weight="2"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/setRepsTxt"
+        android:id="@+id/setRepsTestTxt"
         android:layout_width="@dimen/set_overview_column_width"
         android:layout_height="wrap_content"
         android:layout_weight="2"
-        android:textAlignment="center" />
-</TableRow>
+        android:textAlignment="center"
+        android:textSize="18sp" />
+</LinearLayout>

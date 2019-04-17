@@ -34,7 +34,8 @@ public class ScheduledWeekdaysListConverter {
     public static String arrayListToString(ArrayList<Workout.WeekDay> weekDays) {
         String weekdayString = "";
         for (Workout.WeekDay weekDay : weekDays) {
-            weekdayString += weekDay;
+            weekdayString += weekDay.toString().trim();
+            weekdayString += ",";
         }
         return weekdayString;
     }

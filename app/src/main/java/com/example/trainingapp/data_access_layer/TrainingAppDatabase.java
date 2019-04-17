@@ -8,7 +8,7 @@ import android.content.Context;
 import com.example.trainingapp.PreDefinedExercise;
 import com.example.trainingapp.Workout;
 
-@Database(entities = {PreDefinedExercise.class, Workout.class}, version = 2)
+@Database(entities = {PreDefinedExercise.class, Workout.class}, version = 1)
 public abstract class TrainingAppDatabase extends RoomDatabase {
 
     private static TrainingAppDatabase INSTANCE = null;

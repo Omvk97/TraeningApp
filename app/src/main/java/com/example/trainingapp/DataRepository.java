@@ -140,7 +140,48 @@ public class DataRepository {
         }
     }
 
+    public PreDefinedExercise getPreDefinedExerciseByID(long id) {
+        try {
+            return (new GetPreDefinedExerciseByIDAsyncTask().execute(id)).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
+    private class GetPreDefinedExerciseByIDAsyncTask extends AsyncTask<Long, Void, PreDefinedExercise> {
+
+        @Override
+        protected PreDefinedExercise doInBackground(Long... longs) {
+            return db.exerciseDao().getPreDefinedExerciseByID(longs[0]);
+        }
+    }
+
+    public void updateExercise(PreDefinedExercise... preDefinedExercises) {
+        new UpdateExerciseAsyncTask().execute(preDefinedExercises);
+    }
+
+    private class UpdateExerciseAsyncTask extends AsyncTask<PreDefinedExercise, Void, Void> {
+        @Override
+        protected Void doInBackground(PreDefinedExercise... preDefinedExercises) {
+            db.exerciseDao().updateExercise(preDefinedExercises);
+            return null;
+        }
+    }
+
+    public void deleteExercise(PreDefinedExercise... preDefinedExercises) {
+        new DeleteExerciseAsyncTask().execute(preDefinedExercises);
+    }
+
+    private class DeleteExerciseAsyncTask extends AsyncTask<PreDefinedExercise, Void, Void> {
+        @Override
+        protected Void doInBackground(PreDefinedExercise... preDefinedExercises) {
+            db.exerciseDao().deleteExercise(preDefinedExercises);
+            return null;
+        }
+    }
 }
 
 

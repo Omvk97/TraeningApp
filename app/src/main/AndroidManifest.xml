@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.trainingapp">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -29,7 +31,7 @@
             android:name=".activities.EditExerciseActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".activities.EditWorkoutActivity"
+            android:name=".activities.EditWorkoutPropertiesActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".activities.StartWorkoutActivity"
