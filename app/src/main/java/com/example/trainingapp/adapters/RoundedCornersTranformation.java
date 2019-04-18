@@ -8,7 +8,7 @@ import android.graphics.RectF;
 
 import com.squareup.picasso.Transformation;
 
-public class CircleTransform implements Transformation {
+public class RoundedCornersTranformation implements Transformation {
     @Override
     public Bitmap transform(Bitmap source) {
         int size = Math.min(source.getWidth(), source.getHeight());
@@ -29,13 +29,14 @@ public class CircleTransform implements Transformation {
         paint.setShader(shader);
         paint.setAntiAlias(true);
 
-        canvas.drawRoundRect(new RectF(0, 0, source.getWidth(), source.getHeight()), 0, source.getHeight(), paint);
+        float r = size / 8f;
+        canvas.drawRoundRect(new RectF(0, 0, source.getWidth(), source.getHeight()), r, r, paint);
         squaredBitmap.recycle();
         return bitmap;
     }
 
     @Override
     public String key() {
-        return "circle";
+        return "rounded_corners";
     }
 }
