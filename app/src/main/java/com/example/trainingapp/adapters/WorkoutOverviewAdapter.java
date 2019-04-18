@@ -17,9 +17,9 @@ import com.example.trainingapp.activities.MainActivity;
 
 import java.util.List;
 
-public class WorkoutOverviewAdapter extends RecyclerView.Adapter<WorkoutOverviewAdapter.ViewHolder> implements ItemDeletable {
+public class WorkoutOverviewAdapter extends RecyclerView.Adapter<WorkoutOverviewAdapter.ViewHolder> implements DeletableItems {
     private List<Workout> mWorkouts;
-    private OnNoteListener mOnNoteListener;
+    private NoteListener mNoteListener;
     private MainActivity mActivity;
     private Workout mDeletedWorkout;
     private int mDeletedWorkoutIndex;
@@ -27,7 +27,7 @@ public class WorkoutOverviewAdapter extends RecyclerView.Adapter<WorkoutOverview
 
     public WorkoutOverviewAdapter(List<Workout> workouts, MainActivity activity) {
         this.mWorkouts = workouts;
-        this.mOnNoteListener = activity;
+        this.mNoteListener = activity;
         this.mActivity = activity;
         mDatabase = DataRepository.getInstance(activity.getApplicationContext());
     }
@@ -35,7 +35,7 @@ public class WorkoutOverviewAdapter extends RecyclerView.Adapter<WorkoutOverview
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.workout_overview, viewGroup, false);
-        return new ViewHolder(view, mOnNoteListener);
+        return new ViewHolder(view, mNoteListener);
     }
 
     @Override
@@ -62,27 +62,27 @@ public class WorkoutOverviewAdapter extends RecyclerView.Adapter<WorkoutOverview
         private TextView routineTitle;
         private TextView routineDays;
         private Button startWorkoutBtn;
-        private OnNoteListener onNoteListener;
+        private NoteListener mNoteListener;
 
-        ViewHolder(@NonNull View itemView, OnNoteListener onNoteListener) {
+        ViewHolder(@NonNull View itemView, NoteListener noteListener) {
             super(itemView);
             this.lastTrainingDone = itemView.findViewById(R.id.lastTrainingDoneDateTxt);
             this.routineTitle = itemView.findViewById(R.id.routineTitleTxt);
             this.routineDays = itemView.findViewById(R.id.routineDaysTxt);
             this.startWorkoutBtn = itemView.findViewById(R.id.startWorkoutBtn);
-            this.onNoteListener = onNoteListener;
+            this.mNoteListener = noteListener;
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            onNoteListener.onNoteClick(getAdapterPosition());
+            mNoteListener.onNoteClick(getAdapterPosition());
         }
 
         @Override
         public boolean onLongClick(View v) {
-            onNoteListener.onLongNoteClick(getAdapterPosition());
+            mNoteListener.onLongNoteClick(getAdapterPosition());
             return true;
         }
     }

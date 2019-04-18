@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.trainingapp.DataRepository;
 import com.example.trainingapp.R;
 import com.example.trainingapp.WorkoutExercise;
 import com.example.trainingapp.activities.WorkoutActivity;
@@ -25,43 +24,50 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorkoutExerciseAdapter extends RecyclerView.Adapter<WorkoutExerciseAdapter.WorkoutExerciseViewHolder> implements ItemDeletable {
+public class WorkoutExerciseAdapter extends RecyclerView.Adapter<WorkoutExerciseAdapter.WorkoutExerciseViewHolder> implements DeletableItems, MoveableItems {
+    private static final String TAG = "WorkoutExerciseAdapter";
     private List<WorkoutExercise> mWorkoutExercises;
-    private OnNoteListener mOnNoteListener;
+    private NoteListener mNoteListener;
     private WorkoutActivity mActivity;
     private WorkoutExercise mDeletedExercise;
     private int mDeletedExerciseIndex;
-    private DataRepository mDatabase;
+    private boolean viewsShouldCollapse = false;
 
     public WorkoutExerciseAdapter(ArrayList<WorkoutExercise> workoutExercises, WorkoutActivity workoutActivity) {
         mActivity = workoutActivity;
         mWorkoutExercises = workoutExercises;
-        mOnNoteListener = workoutActivity;
+        mNoteListener = workoutActivity;
     }
 
     @Override
     public WorkoutExerciseViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.recyclerview_workout_exercise, viewGroup, false);
-        return new WorkoutExerciseViewHolder(view, mOnNoteListener);
+        return new WorkoutExerciseViewHolder(view, mNoteListener);
     }
 
     @Override
     public void onBindViewHolder(WorkoutExerciseViewHolder workoutExerciseViewHolder, int i) {
-        workoutExerciseViewHolder.exerciseTitle.setText(mWorkoutExercises.get(i).getExerciseName());
-        workoutExerciseViewHolder.restBetweenSets.setText(mWorkoutExercises.get(i).getRestTimerString());
-        workoutExerciseViewHolder.addSetBtn.setTag(String.valueOf(i)); // Position in exercises arraylist for later reference of which exercise it belongs to
-        workoutExerciseViewHolder.adjustRestTimerBtn.setTag(String.valueOf(i)); // Position in exercises arraylist for later reference of which exercise it belongs to
-        ListView setsListView = workoutExerciseViewHolder.setsList;
-        SetAdapter customAdapter = new SetAdapter(mActivity.getApplicationContext(), R.layout.exercise_set_test_view, mWorkoutExercises.get(i));
-        setsListView.setAdapter(customAdapter);
-        if (setsListView.getHeaderViewsCount() == 0) {
-            setListViewHeader(setsListView);
-        }
+        if (viewsShouldCollapse) {
+            workoutExerciseViewHolder.exerciseTitle.setText(mWorkoutExercises.get(i).getExerciseName());
+            workoutExerciseViewHolder.collapseViewssss();
+        } else {
+            workoutExerciseViewHolder.expandViews();
+            workoutExerciseViewHolder.exerciseTitle.setText(mWorkoutExercises.get(i).getExerciseName());
+            workoutExerciseViewHolder.restBetweenSets.setText(mWorkoutExercises.get(i).getRestTimerString());
+            workoutExerciseViewHolder.addSetBtn.setTag(String.valueOf(i)); // Position in exercises arraylist for later reference of which exercise it belongs to
+            workoutExerciseViewHolder.adjustRestTimerBtn.setTag(String.valueOf(i)); // Position in exercises arraylist for later reference of which exercise it belongs to
+            ListView setsListView = workoutExerciseViewHolder.setsList;
+            SetAdapter customAdapter = new SetAdapter(mActivity.getApplicationContext(), R.layout.exercise_set_view, mWorkoutExercises.get(i));
+            setsListView.setAdapter(customAdapter);
+            if (setsListView.getHeaderViewsCount() == 0) {
+                setListViewHeader(setsListView);
+            }
 
-        Picasso.get().load(mWorkoutExercises.get(i).getPictureUriString())
-                .placeholder(R.drawable.image_placeholder)
-                .error(R.drawable.error)
-                .into(workoutExerciseViewHolder.exerciseImage);
+            Picasso.get().load(mWorkoutExercises.get(i).getPictureUriString())
+                    .placeholder(R.drawable.image_placeholder)
+                    .error(R.drawable.error)
+                    .into(workoutExerciseViewHolder.exerciseImage);
+        }
     }
 
     @Override
@@ -72,6 +78,66 @@ public class WorkoutExerciseAdapter extends RecyclerView.Adapter<WorkoutExercise
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+    }
+
+    protected class WorkoutExerciseViewHolder extends ViewHolder implements OnClickListener, OnLongClickListener {
+        private TextView exerciseTitle;
+        private TextView restBetweenSets;
+        private ListView setsList;
+        private Button addSetBtn;
+        private Button adjustRestTimerBtn;
+        private ImageView exerciseImage;
+        private ImageView restTimerImage;
+        private NoteListener mNoteListener;
+
+
+        WorkoutExerciseViewHolder(@NonNull View itemView, NoteListener noteListener) {
+            super(itemView);
+            exerciseTitle = itemView.findViewById(R.id.workoutExerciseTitleTxt);
+            restBetweenSets = itemView.findViewById(R.id.restBetweenSetsTxt);
+            setsList = itemView.findViewById(R.id.setsListView);
+            addSetBtn = itemView.findViewById(R.id.addSetBtn);
+            adjustRestTimerBtn = itemView.findViewById(R.id.adjustRestTimerBtn);
+            exerciseImage = itemView.findViewById(R.id.workoutExerciseImage);
+            restTimerImage = itemView.findViewById(R.id.restTimerWatch);
+
+
+            this.mNoteListener = noteListener;
+            itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            mNoteListener.onNoteClick(getAdapterPosition());
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            collapseViews();
+/*
+            mNoteListener.onLongNoteClick(getAdapterPosition());
+*/
+            return true;
+        }
+
+        public void collapseViewssss() {
+            restBetweenSets.setVisibility(View.GONE);
+            setsList.setVisibility(View.GONE);
+            exerciseImage.setVisibility(View.GONE);
+            addSetBtn.setVisibility(View.GONE);
+            adjustRestTimerBtn.setVisibility(View.GONE);
+            restTimerImage.setVisibility(View.GONE);
+        }
+
+        public void expandViews() {
+            restBetweenSets.setVisibility(View.VISIBLE);
+            setsList.setVisibility(View.VISIBLE);
+            exerciseImage.setVisibility(View.VISIBLE);
+            addSetBtn.setVisibility(View.VISIBLE);
+            adjustRestTimerBtn.setVisibility(View.VISIBLE);
+            restTimerImage.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -98,44 +164,33 @@ public class WorkoutExerciseAdapter extends RecyclerView.Adapter<WorkoutExercise
         addedExerciseSnack.show();
     }
 
-    protected class WorkoutExerciseViewHolder extends ViewHolder implements OnClickListener, OnLongClickListener {
-        private TextView exerciseTitle;
-        private TextView restBetweenSets;
-        private ListView setsList;
-        private Button addSetBtn;
-        private Button adjustRestTimerBtn;
-        private ImageView exerciseImage;
-        private OnNoteListener onNoteListener;
+    @Override
+    public void onViewMove(int oldPosition, int newPosition) {
+        WorkoutExercise selectedExercise = mWorkoutExercises.get(oldPosition);
+        WorkoutExercise exercise = new WorkoutExercise(selectedExercise);
+        mWorkoutExercises.remove(oldPosition);
+        mWorkoutExercises.add(newPosition, exercise);
+        notifyItemMoved(oldPosition, newPosition);
+    }
 
-        WorkoutExerciseViewHolder(@NonNull View itemView, OnNoteListener onNoteListener) {
-            super(itemView);
-            exerciseTitle = itemView.findViewById(R.id.workoutExerciseTitleTxt);
-            restBetweenSets = itemView.findViewById(R.id.restBetweenSetsTxt);
-            setsList = itemView.findViewById(R.id.setsListView);
-            addSetBtn = itemView.findViewById(R.id.addSetBtn);
-            adjustRestTimerBtn = itemView.findViewById(R.id.adjustRestTimerBtn);
-            exerciseImage = itemView.findViewById(R.id.workoutExerciseImage);
-
-
-            this.onNoteListener = onNoteListener;
-            itemView.setOnClickListener(this);
-            itemView.setOnLongClickListener(this);
+    @Override
+    public void collapseViews() {
+        if (viewsShouldCollapse) {
+            viewsShouldCollapse = false;
+        } else {
+            viewsShouldCollapse = true;
         }
+        notifyDataSetChanged();
+    }
 
-        @Override
-        public void onClick(View v) {
-            onNoteListener.onNoteClick(getAdapterPosition());
-        }
-
-        @Override
-        public boolean onLongClick(View v) {
-            onNoteListener.onLongNoteClick(getAdapterPosition());
-            return true;
-        }
+    @Override
+    public void expandViews() {
+        viewsShouldCollapse = false;
+        notifyDataSetChanged();
     }
 
     private void setListViewHeader(ListView setsListView) {
-        View headerView = LayoutInflater.from(mActivity.getApplicationContext()).inflate(R.layout.exercise_set_test_view, null);
+        View headerView = LayoutInflater.from(mActivity.getApplicationContext()).inflate(R.layout.exercise_set_view, null);
         TextView headerSetNumber = headerView.findViewById(R.id.setNumberTestTxt);
         headerSetNumber.setText("SET");
         headerSetNumber.setTypeface(null, Typeface.BOLD);

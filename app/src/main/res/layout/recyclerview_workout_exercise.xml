@@ -8,7 +8,11 @@
     android:layout_marginStart="0dp"
     android:layout_marginTop="8dp"
     android:layout_marginEnd="0dp"
+    app:cardBackgroundColor="@color/colorTextAndIcons"
     app:layout_constraintEnd_toEndOf="parent"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:focusable="true"
+    android:clickable="true"
     app:layout_constraintStart_toStartOf="parent">
 
     <android.support.constraint.ConstraintLayout
@@ -42,7 +46,7 @@
             tools:text="Deadlift (barbell)" />
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/restTimerWatch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -55,9 +59,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView3"
-            app:layout_constraintStart_toEndOf="@+id/imageView3"
-            app:layout_constraintTop_toTopOf="@+id/imageView3"
+            app:layout_constraintBottom_toBottomOf="@+id/restTimerWatch"
+            app:layout_constraintStart_toEndOf="@+id/restTimerWatch"
+            app:layout_constraintTop_toTopOf="@+id/restTimerWatch"
             tools:text="1:30 rest" />
 
         <Button
@@ -98,7 +102,7 @@
             android:layout_marginEnd="8dp"
             android:scrollbars="none"
             app:layout_constraintEnd_toEndOf="@+id/workoutExerciseImage"
-            app:layout_constraintStart_toStartOf="@+id/imageView3"
+            app:layout_constraintStart_toStartOf="@+id/restTimerWatch"
             app:layout_constraintTop_toBottomOf="@+id/adjustRestTimerBtn" />
 
     </android.support.constraint.ConstraintLayout>

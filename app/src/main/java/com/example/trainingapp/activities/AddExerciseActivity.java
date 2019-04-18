@@ -23,12 +23,12 @@ import com.example.trainingapp.R;
 import com.example.trainingapp.Workout;
 import com.example.trainingapp.WorkoutExercise;
 import com.example.trainingapp.adapters.AddExerciseAdapter;
-import com.example.trainingapp.adapters.OnNoteListener;
+import com.example.trainingapp.adapters.NoteListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddExerciseActivity extends AppCompatActivity implements OnNoteListener {
+public class AddExerciseActivity extends AppCompatActivity implements NoteListener {
     private static final String TAG = "AddExerciseActivity";
     private List<PreDefinedExercise> preDefinedExercises = new ArrayList<>();
     private AddExerciseAdapter mAdapter;

@@ -28,7 +28,7 @@ public class SetAdapter extends ArrayAdapter<ExerciseSet> {
         View view = convertView;
         if (view == null) {
             LayoutInflater layoutInflater = LayoutInflater.from(context);
-            view = layoutInflater.inflate(R.layout.exercise_set_test_view, null);
+            view = layoutInflater.inflate(R.layout.exercise_set_view, null);
         }
 
         ExerciseSet set = getItem(position);

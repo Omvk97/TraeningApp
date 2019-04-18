@@ -6,9 +6,9 @@ import android.support.v7.widget.RecyclerView;
 
 import com.example.trainingapp.R;
 import com.example.trainingapp.Workout;
-import com.example.trainingapp.adapters.OnNoteListener;
+import com.example.trainingapp.adapters.NoteListener;
 
-public class StartWorkoutActivity extends AppCompatActivity implements OnNoteListener {
+public class StartWorkoutActivity extends AppCompatActivity implements NoteListener {
 
     private Workout selectedWorkout;
     private RecyclerView exercisesRV;

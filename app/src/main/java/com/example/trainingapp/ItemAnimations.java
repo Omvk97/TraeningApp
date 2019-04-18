@@ -10,40 +10,50 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
-import com.example.trainingapp.adapters.ItemDeletable;
+import com.example.trainingapp.adapters.DeletableItems;
+import com.example.trainingapp.adapters.MoveableItems;
 
-public class SwipeToDeleteCallBack extends ItemTouchHelper.SimpleCallback {
-    private static final String TAG = "SwipeToDeleteCallBack";
+public class ItemAnimations extends ItemTouchHelper.SimpleCallback {
+    private static final String TAG = "ItemAnimations";
     private Drawable icon;
     private final ColorDrawable swipeBackground;
-    private ItemDeletable mItemDeletable;
+    private DeletableItems mDeletableItems;
+    private MoveableItems mMoveableItems;
 
-    public SwipeToDeleteCallBack(ItemDeletable itemDeletable) {
-        super(0, ItemTouchHelper.LEFT);
-        mItemDeletable = itemDeletable;
-        icon = ContextCompat.getDrawable(itemDeletable.getContext(), R.drawable.delete);
+    public ItemAnimations(int movementFlagDragAndDrop, DeletableItems deletableItems) {
+        super(movementFlagDragAndDrop, ItemTouchHelper.LEFT);
+        mDeletableItems = deletableItems;
+        if (deletableItems instanceof MoveableItems) {
+            mMoveableItems = (MoveableItems) deletableItems;
+        }
+        icon = ContextCompat.getDrawable(deletableItems.getContext(), R.drawable.delete);
         swipeBackground = new ColorDrawable(Color.RED);
     }
 
     @Override
     public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder viewHolder1) {
-        return false;
+        if (mMoveableItems != null) {
+            mMoveableItems.onViewMove(viewHolder.getAdapterPosition(), viewHolder1.getAdapterPosition());
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         int position = viewHolder.getAdapterPosition();
-        mItemDeletable.deleteItem(position);
+        mDeletableItems.deleteItem(position);
     }
 
     @Override
     public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
                             float dX, float dY, int actionState, boolean isCurrentlyActive) {
-        super.onChildDraw(c, recyclerView, viewHolder, dX,
-                dY, actionState, isCurrentlyActive);
+
+        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+
         View itemView = viewHolder.itemView;
-        int backgroundCornerOffset = 10;
-        int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+        int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 6;
         int iconTop = itemView.getTop() + (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
         int iconBottom = iconTop + icon.getIntrinsicHeight();
 
@@ -52,13 +62,16 @@ public class SwipeToDeleteCallBack extends ItemTouchHelper.SimpleCallback {
             int iconRight = itemView.getRight() - iconMargin;
             icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
 
-            swipeBackground.setBounds(itemView.getRight() + ((int) dX) - backgroundCornerOffset,
+            swipeBackground.setBounds(itemView.getRight() + ((int) dX) - 100,
                     itemView.getTop(), itemView.getRight(), itemView.getBottom());
         } else { // view is unSwiped
             swipeBackground.setBounds(0, 0, 0, 0);
+            icon.setBounds(0, 0, 0, 0);
         }
 
         swipeBackground.draw(c);
         icon.draw(c);
     }
+
+
 }

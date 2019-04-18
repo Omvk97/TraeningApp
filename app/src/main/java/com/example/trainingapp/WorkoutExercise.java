@@ -11,13 +11,33 @@ public class WorkoutExercise extends PreDefinedExercise {
     private RestTimer restTimer = null;
     private Pair<Date, ArrayList<ExerciseSet>> workoutToBePerformedScabelon;
 
-    public WorkoutExercise(PreDefinedExercise preDefinedExercise) {
+    public WorkoutExercise(PreDefinedExercise preDefinedExercise) { // Made from a predefined exercise
         super(preDefinedExercise.getExerciseName(), preDefinedExercise.getExerciseMuscleCategory(),
                 preDefinedExercise.getCategory(), preDefinedExercise.getPictureUriString());
         setId(preDefinedExercise.getId());
         workoutToBePerformedScabelon = new Pair<>(new Date(), new ArrayList<>(Arrays.asList(new ExerciseSet(), new ExerciseSet(), new ExerciseSet())));
     }
 
+    public WorkoutExercise(WorkoutExercise workoutExercise) { // Copying a workoutexercise for drag and drop movement
+        super(workoutExercise.getExerciseName(), workoutExercise.getExerciseMuscleCategory(),
+                workoutExercise.getCategory(), workoutExercise.getPictureUriString());
+        setId(workoutExercise.getId());
+        setRestTimer(restTimer = workoutExercise.getRestTimer());
+        setWorkoutToBePerformedScabelon(workoutToBePerformedScabelon = workoutExercise.getWorkoutToBePerformedScabelon());
+
+    }
+
+    public void setRestTimer(RestTimer restTimer) {
+        this.restTimer = restTimer;
+    }
+
+    public Pair<Date, ArrayList<ExerciseSet>> getWorkoutToBePerformedScabelon() {
+        return workoutToBePerformedScabelon;
+    }
+
+    public void setWorkoutToBePerformedScabelon(Pair<Date, ArrayList<ExerciseSet>> workoutToBePerformedScabelon) {
+        this.workoutToBePerformedScabelon = workoutToBePerformedScabelon;
+    }
 
     public void setGeneralRestTimer(Workout workout) {
         this.restTimer = workout.getWorkoutRestTimer(); // References the same timer in memory as the one in workout

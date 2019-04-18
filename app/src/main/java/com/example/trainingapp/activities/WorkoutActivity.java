@@ -17,20 +17,21 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.example.trainingapp.DataRepository;
+import com.example.trainingapp.ItemAnimations;
 import com.example.trainingapp.R;
-import com.example.trainingapp.SwipeToDeleteCallBack;
 import com.example.trainingapp.Workout;
 import com.example.trainingapp.WorkoutExercise;
-import com.example.trainingapp.adapters.OnNoteListener;
+import com.example.trainingapp.adapters.NoteListener;
 import com.example.trainingapp.adapters.WorkoutExerciseAdapter;
 
-public class WorkoutActivity extends AppCompatActivity implements OnNoteListener {
+public class WorkoutActivity extends AppCompatActivity implements NoteListener {
     private static final String TAG = "WorkoutActivity";
     private Workout mSelectedWorkout = null;
     private WorkoutExerciseAdapter mAdapter;
     private EditText mRestTimerMinText;
     private EditText mRestTimerSectext;
     private DataRepository mDatabase;
+    private RecyclerView exerciseRV;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -77,14 +78,15 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
     }
 
     private void setupRecyclerView() {
-        RecyclerView exerciseRV = findViewById(R.id.routine_details_RV);
+        exerciseRV = findViewById(R.id.routine_details_RV);
         mSelectedWorkout = mDatabase.getWorkoutByID(UserInteractions.getInstance().getSelectedWorkoutID());
         exerciseRV.setHasFixedSize(true);
         exerciseRV.setNestedScrollingEnabled(false);
         exerciseRV.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new WorkoutExerciseAdapter(mSelectedWorkout.getExercises(), this);
         exerciseRV.setAdapter(mAdapter);
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallBack(mAdapter));
+        int dragAndDrop = ItemTouchHelper.DOWN | ItemTouchHelper.UP;
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemAnimations(dragAndDrop, mAdapter));
         itemTouchHelper.attachToRecyclerView(exerciseRV);
     }
 
@@ -216,7 +218,7 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
 
     @Override
     public void onLongNoteClick(final int position) {
-        new AlertDialog.Builder(this)
+/*        new AlertDialog.Builder(this)
                 .setMessage(getString(R.string.deletion_confirmation, mSelectedWorkout.getExercises().get(position).getExerciseName()))
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -228,7 +230,7 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
                     public void onClick(DialogInterface dialog, int id) {
                         // User cancelled the dialog
                     }
-                }).create().show();
+                }).create().show();*/
     }
 
     @Override
@@ -244,6 +246,7 @@ public class WorkoutActivity extends AppCompatActivity implements OnNoteListener
         mDatabase.updateWorkout(mSelectedWorkout);
     }
 
-
-
+    public RecyclerView getExerciseRV() {
+        return exerciseRV;
+    }
 }

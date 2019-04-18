@@ -18,9 +18,9 @@ import android.widget.TextView;
 import com.example.trainingapp.DataRepository;
 import com.example.trainingapp.PreDefinedExerciseInsertionAsyncTask;
 import com.example.trainingapp.R;
-import com.example.trainingapp.SwipeToDeleteCallBack;
+import com.example.trainingapp.ItemAnimations;
 import com.example.trainingapp.Workout;
-import com.example.trainingapp.adapters.OnNoteListener;
+import com.example.trainingapp.adapters.NoteListener;
 import com.example.trainingapp.adapters.WorkoutOverviewAdapter;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
-public class MainActivity extends AppCompatActivity implements OnNoteListener {
+public class MainActivity extends AppCompatActivity implements NoteListener {
     private static final String FIRST_TIME_USE = "first time";
     private List<Workout> mWorkouts = new ArrayList<>();
     private Context mContext;
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements OnNoteListener {
         mWorkoutRV.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new WorkoutOverviewAdapter(mWorkouts, this);
         mWorkoutRV.setAdapter(mAdapter);
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallBack(mAdapter));
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemAnimations(0, mAdapter));
         itemTouchHelper.attachToRecyclerView(mWorkoutRV);
     }
 

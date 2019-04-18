@@ -22,19 +22,19 @@ public class AddExerciseAdapter extends RecyclerView.Adapter<AddExerciseAdapter.
     private static final String TAG = "AddExerciseAdapter";
     private List<PreDefinedExercise> mPreDefinedExercises;
     private List<PreDefinedExercise> mPreDefinedExercisesFiltered;
-    private OnNoteListener mOnNoteListener;
+    private NoteListener mNoteListener;
 
-    public AddExerciseAdapter(List<PreDefinedExercise> preDefinedExercises, OnNoteListener onNoteListener) {
+    public AddExerciseAdapter(List<PreDefinedExercise> preDefinedExercises, NoteListener noteListener) {
         mPreDefinedExercises = preDefinedExercises;
         mPreDefinedExercisesFiltered = preDefinedExercises;
-        mOnNoteListener = onNoteListener;
+        mNoteListener = noteListener;
 
     }
 
     @Override
     public ExerciseViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.recyclerview_add_exercise, viewGroup, false);
-        return new ExerciseViewHolder(view, mOnNoteListener);
+        return new ExerciseViewHolder(view, mNoteListener);
     }
 
     @Override
@@ -101,26 +101,26 @@ public class AddExerciseAdapter extends RecyclerView.Adapter<AddExerciseAdapter.
         private TextView exerciseName;
         private ImageView exerciseImage;
         private ImageButton editImageButton;
-        private OnNoteListener onNoteListener;
+        private NoteListener mNoteListener;
 
-        ExerciseViewHolder(@NonNull View itemView, OnNoteListener onNoteListener) {
+        ExerciseViewHolder(@NonNull View itemView, NoteListener noteListener) {
             super(itemView);
             this.exerciseName = itemView.findViewById(R.id.exerciseName);
             this.exerciseImage = itemView.findViewById(R.id.exerciseImage);
             this.editImageButton = itemView.findViewById(R.id.editImageButton);
-            this.onNoteListener = onNoteListener;
+            this.mNoteListener = noteListener;
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            onNoteListener.onNoteClick(getAdapterPosition());
+            mNoteListener.onNoteClick(getAdapterPosition());
         }
 
         @Override
         public boolean onLongClick(View v) {
-            onNoteListener.onLongNoteClick(getAdapterPosition());
+            mNoteListener.onLongNoteClick(getAdapterPosition());
             return true;
         }
     }
